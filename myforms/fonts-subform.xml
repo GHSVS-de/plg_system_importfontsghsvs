@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<field name="import_line" type="url" default="" filter="url" validate="url"
+		label="PLG_SYSTEM_IMPORTFONTSGHSVS_IMPORT_LINE"
+		description="" />
+
+	<field name="load_in_templates" type="TemplateStyle" default=""
+	 label="PLG_SYSTEM_IMPORTFONTSGHSVS_TEMPLATES"
+	 multiple="true"
+	 description="">
+	</field>
+
+	<field name="active" type="list" default="0"
+		label="PLG_SYSTEM_IMPORTFONTSGHSVS_ACTIVE"
+		description=""
+		filter="integer">
+		<option value="0">JNO</option>
+		<option value="1">JYES</option>
+	</field>
+</form>
