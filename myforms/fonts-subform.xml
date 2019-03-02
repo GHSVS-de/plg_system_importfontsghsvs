@@ -17,4 +17,6 @@
 		<option value="0">JNO</option>
 		<option value="1">JYES</option>
 	</field>
+	
+	<field name="family" type="hidden" default="" filter="string"/>
 </form>
