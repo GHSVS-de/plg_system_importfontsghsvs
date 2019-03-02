@@ -130,7 +130,22 @@
 		
 		<field name="robots" type="radio" default="0"
 			label="PLG_SYSTEM_IMPORTFONTSGHSVS_ROBOTS"
-			description="" class="switcher btn-group btn-group-yesno">
+			description="" class="switcher btn-group btn-group-yesno"
+			filter="integer">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+<!--RUNSTANDARDAGENTS-->
+		<field name="runStandardAgentsNote" type="plgSystemImportFontsGhsvs.longdescription"
+			hiddenLabel="true"
+			descriptiontext="PLG_SYSTEM_IMPORTFONTSGHSVS_RUNSTANDARDAGENTS_DESC"
+			contentToggler="true"/>
+
+		<field name="runStandardAgents" type="radio" default="0"
+			label="PLG_SYSTEM_IMPORTFONTSGHSVS_RUNSTANDARDAGENTS"
+			description="" class="switcher btn-group btn-group-yesno"
+			filter="integer">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>

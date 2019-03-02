@@ -33,6 +33,7 @@ class PlgImportFontsGhsvsHelper extends Form
 	{
 		$require = array();
 		$fonts   = $params->get($key, null);
+		$i = 0;
 
 		if (!empty($fonts) && is_object($fonts))
 		{
@@ -48,7 +49,8 @@ class PlgImportFontsGhsvsHelper extends Form
 					&& ($import_line = $font->get('import_line', ''))
 					&& (empty($load_in_templates) || in_array($templateStyle, $load_in_templates))
 				){
-					$require[] = $import_line;
+					$require[$i]['import_line'] = $import_line;
+					$require[$i]['family'] = ApplicationHelper::stringURLSafe($font->get('family', ''));
 				}
 			}
 		}
@@ -82,15 +84,24 @@ class PlgImportFontsGhsvsHelper extends Form
 			{
 			 $muster = '/ format\(([^)]+)\)/';
 			 preg_match($muster, $src, $matches);
-			 $ext = trim($matches[1], '"\'');
+
+			 if (!empty($matches[1]))
+			 {
+					$ext = trim($matches[1], '"\'');
+			 }
+			 else
+			 {
+					$ext = 'EOT';
+			 }
 			}
 			$fontFile = $path . '/' . md5($query) . $fragment . '.' .$ext;
 			return array($fontFile, $fragment ? '#' . $fragment : '');
 		}
-		else
+		elseif (!empty($path))
 		{
 			return array($path, '');
 		}
+		return false;
 	}
 
 	public static function log($data)

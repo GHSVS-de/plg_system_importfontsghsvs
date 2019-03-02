@@ -27,7 +27,7 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 	public function __construct()
 	{
 		$this->deleteFolders = array(
-			'/media/importfontsghsvs',
+			'/media/fontsghsvs',
 		);
 		
 		$this->deleteFiles = array(
