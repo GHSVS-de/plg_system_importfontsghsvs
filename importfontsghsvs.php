@@ -17,7 +17,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
-#use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 #use Joomla\Filesystem\File;
@@ -93,157 +92,222 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		}
 
 		$combine    = array();
-		$renewal    = false;
 		$cssPath    = $this->fontPath . '/css';
 		$fallbacks  = $fonts;
-		$userAgent  = $this->app->client->userAgent;
 		$hash       = md5(Factory::getConfig()->get('secret'));
-/*$userAgent  = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)';
-$userAgent  = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0';
-
-*/
-//$userAgent  = 'Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0';
-#$userAgent  = 'Mozilla/4.0 (iPad; CPU OS 4_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.1 Mobile/9A405 Safari/7534.48.3';
-
+		// Extraction pattern for 'url(...)' parts in 'src' value.
+		$urlPartPattern = '/url\(([^)]+)\)/';
 		
-		$context    = array(
-			'http' => array(
-				'header' => 'User-Agent: ' . $userAgent,
-			)
-		);
-		$userAgent  = base64_encode($userAgent);
-
-		foreach ($fonts as $fontKey => $font)
+		if ($this->params->get('runStandardAgents', 0) === 1)
 		{
-			$name = md5($hash . '-' . $userAgent . '-' . base64_encode($font) . '-' . self::$basepath) . '.css';
+			$userAgents = array(
+				'me' => $this->app->client->userAgent,
+				'eot' => 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
+				'woff' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0',
+				'woff2' => 'Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0',
+				'svg' => 'Mozilla/4.0 (iPad; CPU OS 4_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.1 Mobile/9A405 Safari/7534.48.3'
+			);
+		}
+		else
+		{
+			$userAgents  = array($this->app->client->userAgent);
+		}
 
-			//$cssRel = Uri::root(true) . $cssPath . '/' . $name;
-			$cssAbs = JPATH_SITE . '/' . $cssPath . '/' . $name;
-
-			// CSS exists already.
-			if (file_exists($cssAbs))
+		foreach ($userAgents as $userAgent)
+		{
+			$context    = array(
+				'http' => array(
+					'header' => 'User-Agent: ' . $userAgent,
+				)
+			);
+			$userAgent  = base64_encode($userAgent);
+	
+			foreach ($fonts as $fontKey => $fontArray)
 			{
-				$combine[] = file_get_contents($cssAbs);
-				//HTMLHelper::_('stylesheet', $cssRel);
-				unset($fallbacks[$fontKey]);
-				continue;
-			}
-
-			// Google Request necessary.
-			$response = @file_get_contents($font, false, stream_context_create($context));
-
-			if ($response === false || !is_string($response) || !($response = trim($response)))
-			{
-				if ($this->log)
+				$font = $fontArray['import_line'];
+				
+				
+				$name = md5($hash . '-' . $userAgent . '-' . base64_encode($font) . '-' . self::$basepath) . '.css';
+	
+				//$cssRel = Uri::root(true) . $cssPath . '/' . $name;
+				$cssAbs = JPATH_SITE . '/' . $cssPath . '/' . $name;
+	
+				// CSS exists already.
+				if (file_exists($cssAbs))
 				{
-					PlgImportFontsGhsvsHelper::log(
-						Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE', $font)
-					);
+					$combine[] = file_get_contents($cssAbs);
+					//HTMLHelper::_('stylesheet', $cssRel);
+					unset($fallbacks[$fontKey]);
+					continue;
 				}
-				continue;
-			}
+	
+				/* Google Request necessary.
+				   Get the basic CSS. Extract font path. Save font and manipulated CSS locally. */
+				$response = @file_get_contents($font, false, stream_context_create($context));
 
-			$cssparser = new PlgImportFontsGhsvsCssparser;
-			$success   = $cssparser->read_from_string($response);
-
-			if (!$success)
-			{
-				if ($this->log)
-				{
-					PlgImportFontsGhsvsHelper::log(
-						Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
-							$font, __LINE__)
-					);
-				}
-				continue;
-			}
-
-			if (!($parents = $cssparser->find_parent_by_property('src')))
-			{
-				if ($this->log)
-				{
-					PlgImportFontsGhsvsHelper::log(
-						Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
-							$font, __LINE__)
-					);
-				}
-				continue;
-			}
-
-			// Save font files locally.
-			foreach ($parents as $key => $fontFace)
-			{
-				// Extract url(...)-Part
-				$muster = '/url\(([^)]+)\)/';
-				preg_match($muster, $fontFace['src'], $matches);
-				$parents[$key]['urlGoogle'] = trim($matches[1], '"\'');
-
-				$fontFile = PlgImportFontsGhsvsHelper::check4svg(
-					$parents[$key]['urlGoogle'],
-					$parents[$key]['src']
-				);
-
-				if (empty($fontFile))
+				if ($response === false || !is_string($response) || !($response = trim($response)))
 				{
 					if ($this->log)
 					{
 						PlgImportFontsGhsvsHelper::log(
-							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
-								$font)
+							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE', $font)
 						);
 					}
 					continue;
 				}
 
-				$localFile = JPATH_SITE . '/' . $this->fontPath . $fontFile[0];
+				// Extract specific parts from the received CSS.
+				$cssparser = new PlgImportFontsGhsvsCssparser;
+				$success   = $cssparser->read_from_string($response);
 
-				if (!is_file($localFile))
+				if (!$success)
 				{
-					$downloadedFont = @file_get_contents($parents[$key]['urlGoogle']);
-
-					if ($downloadedFont === false)
+					if ($this->log)
 					{
-						if ($this->log)
-						{
-							PlgImportFontsGhsvsHelper::log(
-								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_DOWNLOAD_FAILED',
-									$font, $parents[$key]['urlGoogle'])
-							);
-						}
-						continue;
+						PlgImportFontsGhsvsHelper::log(
+							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
+								$font, __LINE__)
+						);
 					}
-
-					if (!File::write($localFile, $downloadedFont) && $this->log)
-					{
-						if ($this->log)
-						{
-							PlgImportFontsGhsvsHelper::log(
-								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_SAVE_FAILED',
-									$font, $localFile)
-							);
-						}
-						continue;
-					}
+					continue;
 				}
+				
+				// Get all @font-face blocks with 'src: ...' parts.
+				if (!($parents = $cssparser->find_parent_by_property('src')))
+				{
+					if ($this->log)
+					{
+						PlgImportFontsGhsvsHelper::log(
+							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
+								$font, __LINE__)
+						);
+					}
+					continue;
+				}
+				
+				// For final paranoia cleanup.
+				$foundGoogleUrls = array();
+				
+				// Identify and save font files and prepared CSS locally.
+				foreach ($parents as $key => $fontFace)
+				{
+					// Extract google url of font.
+					preg_match($urlPartPattern, $fontFace['src'], $matches);
+					
+					// Index paranoia.
+					if (empty($matches[1]))
+					{
+						if ($this->log)
+						{
+							PlgImportFontsGhsvsHelper::log(
+								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
+									$font, __LINE__)
+							);
+						}
+						continue;
+					}
+					$parents[$key]['urlGoogle'] = trim($matches[1], '"\'');
 
-				$localUrl = '"' . Uri::root(true) . '/' . $this->fontPath
-					. $fontFile[0] . $fontFile[1] . '"';
-				$response = str_replace($parents[$key]['urlGoogle'], $localUrl, $response);
-			} // end - foreach ($parents as $key => $fontFace)
+					if ($parents[$key]['urlGoogle'])
+					{
+						$foundGoogleUrls[] = $parents[$key]['urlGoogle'];
+					}
+					else
+					{
+						if ($this->log)
+						{
+							PlgImportFontsGhsvsHelper::log(
+								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
+									$font, __LINE__)
+							);
+						}
+						continue;
+					}
 
-			$response = $cssparser->cleanString($response);
+					// Get/Create font filepath and filename for local saving ($fontFile[0]).
+					// Get fragment (#Roboto) if present ($fontFile[1]). E.g.needed for SVG.
+					$fontFile = PlgImportFontsGhsvsHelper::check4svg(
+						$parents[$key]['urlGoogle'],
+						$parents[$key]['src']
+					);
+	
+					if ($fontFile === false)
+					{
+						if ($this->log)
+						{
+							PlgImportFontsGhsvsHelper::log(
+								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
+									$font, __LINE__)
+							);
+						}
+						continue;
+					}
 
-			if (!File::write($cssAbs, $response) && $this->log)
-			{
-				PlgImportFontsGhsvsHelper::log(
-					Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_CSS_SAVE_FAILED',
-						$font, $cssAbs)
-				);
-			}
-			$combine[] = $response;
-			unset($fallbacks[$fontKey]);
-		} //foreach ($fonts as $fontKey => $font)
-		
+					/* Exchange google url with loacal one.
+					   Do this as early as possible for paranoid users to go sure that google is away
+					   even if something fails below. */
+					$localUrl = '"' . Uri::root(true) . '/' . $this->fontPath
+						. $fontFile[0] . $fontFile[1] . '"';
+					$response = str_replace($parents[$key]['urlGoogle'], $localUrl, $response, $count);
+
+					if ($this->log && !$count)
+					{
+						PlgImportFontsGhsvsHelper::log(
+							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_REPLACE_GOOGLE_URL',
+								$font)
+						);
+					}
+
+					// Download and save font file if not already exists.
+					$localFile = JPATH_SITE . '/' . $this->fontPath . $fontFile[0];
+
+					if (!is_file($localFile))
+					{
+						$downloadedFont = @file_get_contents($parents[$key]['urlGoogle']);
+
+						if (empty($downloadedFont))
+						{
+							if ($this->log)
+							{
+								PlgImportFontsGhsvsHelper::log(
+									Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_DOWNLOAD_FAILED',
+										$font, $parents[$key]['urlGoogle'])
+								);
+							}
+							continue;
+						}
+
+						if (!File::write($localFile, $downloadedFont))
+						{
+							if ($this->log)
+							{
+								PlgImportFontsGhsvsHelper::log(
+									Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_SAVE_FAILED',
+										$font, $localFile)
+								);
+							}
+							continue;
+						}
+					}
+				} // end - foreach ($parents as $key => $fontFace)
+
+				// Hard core cleanup.
+				$response = str_replace($foundGoogleUrls, '', $response);
+
+				$response = $cssparser->cleanString($response);
+	
+				if (!File::write($cssAbs, $response) && $this->log)
+				{
+					PlgImportFontsGhsvsHelper::log(
+						Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_CSS_SAVE_FAILED',
+							$font, $cssAbs)
+					);
+				}
+				$combine[] = $response;
+				unset($fallbacks[$fontKey]);
+			} //foreach ($fonts as $fontKey => $font)
+		} //foreach ($userAgents as $userAgent)
+
 		if ($fallbacks)
 		{
 			if ($this->log)
@@ -263,6 +327,7 @@ $userAgent  = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firef
 				$combine[] = implode(';', $fallbacks);
 			}
 		}
+
 		if ($combine)
 		{
 			Factory::getDocument()->addStyleDeclaration(implode('', $combine));
@@ -364,26 +429,28 @@ $userAgent  = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firef
 				// Split family= with several fonts (Rooto|Tahoma) into several googleapis links.
 				foreach ($subformData as $item)
 				{
-					if (strpos($item->import_line, '|') !== false)
+					$uri              = Uri::getInstance($item->import_line);
+					$familyParameter  = $uri->getVar('family');
+
+					if (strpos($familyParameter, '|') !== false)
 					{
-						$uri      = Uri::getInstance($item->import_line);
-						$families = $uri->getVar('family');
-						$families = explode('|', $families);
-						$families = array_map('TRIM', $families);
+						$families  = explode('|', $familyParameter);
+						$families  = array_map('TRIM', $families);
 						$families_ = $families;
 
-						foreach ($families as $k => $family)
+						foreach ($families as $k => $singleFamily)
 						{
-							if (!$family)
+							if (!$singleFamily)
 							{
 								unset($families[$k]);
 								continue;
 							}
 
 							$newItem = clone $item;
-							$families[$k] = urlencode($family);
+							$families[$k] = urlencode($singleFamily);
 							$uri->setVar('family', $families[$k]);
 							$newItem->import_line = $uri->toString();
+							$newItem->family = $singleFamily;
 							$collectItems['font' . $x] = $newItem;
 							++$x;
 						}
@@ -406,9 +473,12 @@ $userAgent  = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firef
 					else
 					{
 						$collectItems['font' . $x] = clone $item;
+						$family = explode(':', $familyParameter)[0];
+						$collectItems['font' . $x]->family = $family;
 						++$x;
 					}
 				}
+
 				$subformData = (object) $collectItems;
 				$params->set($fieldName, $subformData);
 				$do = true;
@@ -437,7 +507,7 @@ $userAgent  = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firef
 			{
 				$this->execute = is_bool($force) ? $force : true;
 			}
-			$this->fontPath   = 'media/importfontsghsvs';
+			$this->fontPath   = 'media/fontsghsvs';
 			$this->renewalLog = JPATH_SITE . '/' . $this->fontPath . '/renewal.log';
 			$this->log = $this->params->get('log', 0);
 			self::$logFile = $this->app->get('log_path') . '/' . self::$basepath . '-log.txt';
