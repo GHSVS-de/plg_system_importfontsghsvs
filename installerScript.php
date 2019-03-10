@@ -31,7 +31,10 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 		);
 		
 		$this->deleteFiles = array(
-			Factory::getApplication()->get('log_path') . '/plg_system_importfontsghsvs-log.txt',
+			str_replace(
+				JPATH_ROOT, '',
+				Factory::getApplication()->get('log_path') . '/plg_system_importfonts-log.txt'
+			),
 		);
 	}
 
