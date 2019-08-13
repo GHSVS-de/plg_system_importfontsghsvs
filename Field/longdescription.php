@@ -133,9 +133,11 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 		{
 			$target = $this->id . 'contentToggler';
 			
-			$html[] = '<button class=contentToggler data-togglerContent=' . $target . '>';
+			// Don't use childs like icon SPANs here because reading data-togglerContent
+			// fails then if you click on the child. That's why I love JQuery.
+			$html[] = '<button type="button" class=contentToggler data-togglerContent=' . $target . '>';
 			$html[] = $contentTogglerLabel;
-			$html[] = ' <span class=icon-chevron-down></span></button>';
+			$html[] = '</button>';
 			$html[] = '<div class=togglerContent id=' . $target . '>';
 		}
 		$html[] = $descriptiontext;
@@ -151,7 +153,6 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 			$js = str_replace(array("\n", "\t"), '', ';document.addEventListener("click", function(event)
 {
 	var element = event.target;
-	if (!element.classList.contains("contentToggler")) return;
 	var content = document.getElementById(element.getAttribute("data-togglercontent"));
 	if (content)
 	{

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-	<field name="import_line" type="url" default="" filter="url" validate="url"
+	<field name="import_line" type="text" default="" filter="string"
+		class="extended-width"
 		label="PLG_SYSTEM_IMPORTFONTSGHSVS_IMPORT_LINE"
 		description="" />
 

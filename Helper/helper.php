@@ -111,20 +111,21 @@ class PlgImportFontsGhsvsHelper extends Form
 		if ($logFile)
 		{
 			$data = PlgSystemImportFontsGhsvs::removeJPATH_SITE(strip_tags($data));
-			
+
 			$lines = array();
 
 			if (is_file($logFile))
 			{
-				$lines = file($logFile);
-				$lines = array_map('TRIM', $lines);
+				$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+				//$lines = array_map('TRIM', $lines);
+				$lines = array_flip($lines);
 			}
-			
-			if (!in_array($data, $lines))
+
+			if (!isset($lines[$data]))
 			{
 				$date = '--DATE: ' . date('Y-m-d', time());
 
-				if (!in_array($date, $lines))
+				if (!isset($lines[$date]))
 				{
 					file_put_contents($logFile, $date . "\n", FILE_APPEND);
 				}

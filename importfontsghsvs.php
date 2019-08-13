@@ -24,8 +24,8 @@ use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 
-JLoader::register('PlgImportFontsGhsvsHelper', __DIR__ . '/helper.php');
-JLoader::register('PlgImportFontsGhsvsCssparser', __DIR__ . '/Cssparser.php');
+JLoader::register('PlgImportFontsGhsvsHelper', __DIR__ . '/Helper/helper.php');
+JLoader::register('PlgImportFontsGhsvsCssparser', __DIR__ . '/Helper/Cssparser.php');
 
 class PlgSystemImportFontsGhsvs extends CMSPlugin
 {
@@ -40,7 +40,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 	public static $logFile = null;
 	protected $silent = null;
 
-	// Subforms with fields to clean by filter="something" when saving.
+	// Custom subform extending field to clean by filter="something" when saving.
 	private $usedSubforms = array(
 		// subformFieldName => xml file (without .xml)
 		'fonts' => 'fonts-subform'
@@ -120,6 +120,15 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 					'header' => 'User-Agent: ' . $userAgent,
 				)
 			);
+			
+			// For saving as comment in CSS file.
+			$saveUserAgent = '';
+
+			if ($this->params->get('writeAgentInCssFile', 0) === 1)
+			{
+				$saveUserAgent = '/* ' . str_replace(array('/*', '*/'), array('|*', '*|'), $userAgent) . " */\n";
+			}
+			
 			$userAgent  = base64_encode($userAgent);
 	
 			foreach ($fonts as $fontKey => $fontArray)
@@ -294,7 +303,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 				// Hard core cleanup.
 				$response = str_replace($foundGoogleUrls, '', $response);
 
-				$response = $cssparser->cleanString($response);
+				$response = $saveUserAgent . $cssparser->cleanString($response);
 	
 				if (!File::write($cssAbs, $response) && $this->log)
 				{
@@ -390,6 +399,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 							if ($property === 'import_line')
 							{
 								$value = trim($value);
+								$value = rtrim($value, ';');
 								$value = str_replace(' ', '',$value);
 								$value = str_replace(array('"', "'"), '', $value);
 								$value = str_replace('&amp;', '&', $value);
@@ -591,6 +601,9 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		echo json_encode(array('html' => $html));
 	}
 
+	/**
+	 * Display content of log file
+	*/
 	public function onAjaxPlgSystemImportFontsGhsvsShowLogFile()
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
@@ -613,6 +626,9 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		echo json_encode(array('html' => $html));
 	}
 
+	/**
+	 * Show path and size and download of log file
+	*/
 	public function onAjaxPlgSystemImportFontsGhsvsShowLogFilePath()
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
@@ -633,7 +649,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		if (isset($bytes))
 		{
 			$download = JUri::root() . '/' . ltrim($file, '/');
-			$download = '<a href=' . $download . ' target=_blank>Download</a>';
+			$download = '<a href=' . $download . ' target=_blank download>Download</a>';
 		}
 		echo json_encode(array('html' => 'Path: ' . $file . "\nSize: " . $filesize
 			. "\nDownload: " . (isset($download) ? $download : 'No file found')));

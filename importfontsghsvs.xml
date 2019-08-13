@@ -6,9 +6,10 @@
 	<copyright>Copyright (C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later; see LICENSE.txt</license>
 	<authorUrl>https://www.ghsvs.de</authorUrl>
-	<version>2019.02.19-dev</version>
+	<version>2019.08.13</version>
 	<versionHistory>
-2019.02.19-dev:
+2019.08.13:
+- Add setting writeAgentInCssFile
 	</versionHistory>
 	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
 	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">http://snapshots.ghsvs.de/updates/joomla/plg_system_importfontsghsvs.xml</server></updateservers>
@@ -19,11 +20,10 @@
 
 	<files>
 		<filename plugin="importfontsghsvs">importfontsghsvs.php</filename>
-		<filename>Cssparser.php</filename>
-		<filename>helper.php</filename>
 		<filename>installerScript.php</filename>
 		<filename>LICENSE.txt</filename>
-		<folder>fields</folder>
+		<folder>Field</folder>
+		<folder>Helper</folder>
 		<folder>language</folder>
 		<folder>layouts</folder>
 		<folder>myforms</folder>
@@ -36,7 +36,7 @@
 	</media>
 
  <config>
-  <fields name="params" addfieldpath="plugins/system/importfontsghsvs/fields">
+  <fields name="params" addfieldpath="plugins/system/importfontsghsvs/Field">
 
    <fieldset name="basic">
     <field type="hidden" default="1" name="importfontsghsvsplugin" />
@@ -81,6 +81,13 @@
 			hiddenLabel="true"
 			descriptiontext="PLG_SYSTEM_IMPORTFONTSGHSVS_LOG_DESC"
 			contentToggler="true"/>
+		
+		<field name="writeAgentInCssFile" type="list" default="0" filter="integer"
+			label="Note UserAgent in CSS files"
+			description="Adds a comment inside the CSS files about the browser UserAgent the file is for.">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+		</field>
 
 		<field name="log" type="radio" default="0"
 			label="PLG_SYSTEM_IMPORTFONTSGHSVS_LOG"
@@ -151,13 +158,18 @@
 		</field>
 
 <!--FONTS-->
+		
+		<field name="subformlayoutNote" type="plgSystemImportFontsGhsvs.longdescription"
+			hiddenLabel="true"
+			descriptiontext="PLG_SYSTEM_IMPORTFONTSGHSVS_TEMPLATES_DESC"/>
+
 		<field name="fonts" type="plgSystemImportFontsGhsvs.subformlayout" min="1" max="100"
 			multiple="true"
 			label="" description=""
 			hiddenLabel="true"
 			formsource="plugins/system/importfontsghsvs/myforms/fonts-subform.xml"
 			layout="joomla.form.field.subform.repeatable" groupByFieldset="false"
-			default='{"fonts0":{"import_line":"@import url(\u0027https:\/\/fonts.googleapis.com\/css?family=Roboto:400,400i,700,700i\u0027)","active":"0"},"fonts1":{"import_line":"@import url(\u0027https:\/\/fonts.googleapis.com\/css?family=Open+Sans\u0026subset=latin-ext\u0027);","active":"0"}}'
+			default='{"fonts0":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Roboto:400,400i,700,700i","active":"0"},"fonts1":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Open+Sans\u0026subset=latin-ext","active":"0"}}'
 		/>
 
 		<field name="assetsbe" type="plgSystemImportFontsGhsvs.assetsbe" hidden="true"
