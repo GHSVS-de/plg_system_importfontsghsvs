@@ -5,3 +5,5 @@
 - Joomla's /media/ folder must be writable for PHP (Joomla) to add and fill folder /fontsghsvs/ on-the-fly.
 
 ## Work in progress!
+
+- Plugin works reliable on several Joomla pages for a longer time now.
