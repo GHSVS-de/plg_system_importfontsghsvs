@@ -6,10 +6,13 @@
 	<copyright>Copyright (C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later; see LICENSE.txt</license>
 	<authorUrl>https://www.ghsvs.de</authorUrl>
-	<version>2019.08.13</version>
+	<version>2019.12.01</version>
 	<versionHistory>
 2019.08.13:
 - Add setting writeAgentInCssFile
+2019.12.01:
+- Add display=swap to default "demo" entries.
+- Correct empty(object) code.
 	</versionHistory>
 	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
 	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/importfonts-update.xml</server></updateservers>
@@ -169,7 +172,7 @@
 			hiddenLabel="true"
 			formsource="plugins/system/importfontsghsvs/myforms/fonts-subform.xml"
 			layout="joomla.form.field.subform.repeatable" groupByFieldset="false"
-			default='{"fonts0":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Roboto:400,400i,700,700i","active":"0"},"fonts1":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Open+Sans\u0026subset=latin-ext","active":"0"}}'
+			default='{"fonts0":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Roboto:400,400i,700,700i\u0026display=swap","active":"0"},"fonts1":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Open+Sans\u0026display=swap\u0026subset=latin-ext","active":"0"}}'
 		/>
 
 		<field name="assetsbe" type="plgSystemImportFontsGhsvs.assetsbe" hidden="true"
