@@ -37,7 +37,9 @@ class PlgImportFontsGhsvsHelper extends Form
 
 		if (!empty($fonts) && is_object($fonts))
 		{
-			$templateStyle = Factory::getApplication()->getTemplate(true)->id;
+			// Bug fix: Some stupid plugins still "destroy" $templateStyle->id.
+			$templateStyle = Factory::getApplication()->getTemplate(true);
+			$templateStyle = isset($templateStyle->id) ? $templateStyle->id : 0;
 
 			foreach ($fonts as $font)
 			{
@@ -51,6 +53,7 @@ class PlgImportFontsGhsvsHelper extends Form
 				){
 					$require[$i]['import_line'] = $import_line;
 					$require[$i]['family'] = ApplicationHelper::stringURLSafe($font->get('family', ''));
+					$i++;
 				}
 			}
 		}
