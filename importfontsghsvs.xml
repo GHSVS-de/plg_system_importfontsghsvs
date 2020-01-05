@@ -17,6 +17,8 @@
 Bug fix "Notice: Undefined property: stdClass::$id in plugins/system/importfontsghsvs/Helper/helper.php on line 40"
 - 2020.01.03:
 Grave bug fixed. helper.php. Loaded only 1 font if more than 1 were configured.
+- 2020.01.05:
+Fix https://github.com/GHSVS-de/plg_system_importfontsghsvs/issues/5
 	</versionHistory>
 	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
 	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/importfonts-update.xml</server></updateservers>

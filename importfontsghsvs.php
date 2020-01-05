@@ -321,19 +321,24 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		{
 			if ($this->log)
 			{
-				PlgImportFontsGhsvsHelper::log(
-					Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FALLBACKS',
-						implode(', ', $fallbacks))
-				);
+				foreach ($fallbacks as $fallbackItem)
+				{
+					PlgImportFontsGhsvsHelper::log(
+						Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FALLBACKS',
+							implode(', ', $fallbackItem))
+					);
+				}
 			}
 
 			if ($this->params->get('fallback', 0) === 1)
 			{
-				foreach ($fallbacks as $key => $fallback)
+				$fallbackImports = array();
+				
+				foreach ($fallbacks as $key => $fallbackItem)
 				{
-					$fallbacks[$key] = "@import url('" . $fallback . "')";
+					$fallbackImports[$key] = "@import url('" . $fallbackItem['import_line'] . "')";
 				}
-				$combine[] = implode(';', $fallbacks);
+				$combine[] = implode(';', $fallbackImports);
 			}
 		}
 
