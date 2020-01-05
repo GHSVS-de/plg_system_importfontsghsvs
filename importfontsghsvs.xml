@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later; see LICENSE.txt</license>
 	<authorUrl>https://www.ghsvs.de</authorUrl>
-	<version>2020.01.03</version>
+	<version>2020.01.05</version>
 	<versionHistory>
 2019.08.13:
 - Add setting writeAgentInCssFile
