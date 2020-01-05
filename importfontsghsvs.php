@@ -101,7 +101,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		if ($this->params->get('runStandardAgents', 0) === 1)
 		{
 			$userAgents = array(
-				'me' => $this->app->client->userAgent,
+				// 'me' => $this->app->client->userAgent,
 				'eot' => 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
 				'woff' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0',
 				'woff2' => 'Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0',
