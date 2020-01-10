@@ -29,13 +29,13 @@ class PlgImportFontsGhsvsHelper extends Form
 		return parent::filterField($element, $value);
 	}
 
-	public static function getFonts($params, $key = 'fonts')
+	public static function getFonts($params, $key = 'fonts') : array
 	{
 		$require = array();
 		$fonts   = $params->get($key, null);
 		$i = 0;
 
-		if (!empty($fonts) && is_object($fonts))
+		if (is_object($fonts) && count(get_object_vars($fonts)))
 		{
 			// Bug fix: Some stupid plugins still "destroy" $templateStyle->id.
 			$templateStyle = Factory::getApplication()->getTemplate(true);

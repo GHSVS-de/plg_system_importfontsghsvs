@@ -13,14 +13,15 @@
 2019.12.01:
 - Add display=swap to default "demo" entries.
 - Correct empty(object) code.
-- 2019.12.13:
-Bug fix "Notice: Undefined property: stdClass::$id in plugins/system/importfontsghsvs/Helper/helper.php on line 40"
-- 2020.01.03:
-Grave bug fixed. helper.php. Loaded only 1 font if more than 1 were configured.
-- 2020.01.05:
-Fix https://github.com/GHSVS-de/plg_system_importfontsghsvs/issues/5
-- 2020.01.09:
-Review "Standard Browsers"
+2019.12.13:
+- Bug fix "Notice: Undefined property: stdClass::$id in plugins/system/importfontsghsvs/Helper/helper.php on line 40"
+2020.01.03:
+- Grave bug fixed. helper.php. Loaded only 1 font if more than 1 were configured.
+2020.01.05:
+- Fix https://github.com/GHSVS-de/plg_system_importfontsghsvs/issues/5
+2020.01.09:
+- Review "Standard Browsers". Result: REMOVED this feature completely.
+- Some small code optimizations.
 	</versionHistory>
 	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
 	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/importfonts-update.xml</server></updateservers>
@@ -154,19 +155,23 @@ Review "Standard Browsers"
 			<option value="1">JYES</option>
 		</field>
 
-<!--RUNSTANDARDAGENTS-->
-		<field name="runStandardAgentsNote" type="plgSystemImportFontsGhsvs.longdescription"
+<!--RUNSTANDARDAGENTS
+Kept here ONLY for debugging purposes of author.
+-->
+		<!--<field name="runStandardAgentsNote" type="plgSystemImportFontsGhsvs.longdescription"
 			hiddenLabel="true"
 			descriptiontext="PLG_SYSTEM_IMPORTFONTSGHSVS_RUNSTANDARDAGENTS_DESC"
-			contentToggler="true"/>
+			contentToggler="true"/>-->
 
-		<field name="runStandardAgents" type="radio" default="0"
+		<!--<field name="runStandardAgents" type="radio" default="0"
 			label="PLG_SYSTEM_IMPORTFONTSGHSVS_RUNSTANDARDAGENTS"
 			description="" class="switcher btn-group btn-group-yesno"
 			filter="integer">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-		</field>
+		</field>-->
+		
+		<field name="runStandardAgents" type="hidden" default="0"/>
 
 <!--FONTS-->
 		

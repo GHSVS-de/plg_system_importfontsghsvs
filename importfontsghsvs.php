@@ -98,14 +98,16 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 		// Extraction pattern for 'url(...)' parts in 'src' value.
 		$urlPartPattern = '/url\(([^)]+)\)/';
 		
-		if ($this->params->get('runStandardAgents', 0) === 1)
+		// Kept here ONLY for debugging purposes of author.
+		if ($this->params->get('runStandardAgents', 0) === 100)
 		{
 			$userAgents = array(
 				// 'me' => $this->app->client->userAgent,
 				'eot' => 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
 				'woff' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0',
 				'woff2' => 'Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0',
-				'svg' => 'Mozilla/4.0 (iPad; CPU OS 4_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.1 Mobile/9A405 Safari/7534.48.3'
+				'svg' => 'Mozilla/4.0 (iPad; CPU OS 4_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.1 Mobile/9A405 Safari/7534.48.3',
+				'ttf' => 'Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) Safari/538.1 Daum/4.1',
 			);
 		}
 		else
@@ -134,8 +136,6 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 			foreach ($fonts as $fontKey => $fontArray)
 			{
 				$font = $fontArray['import_line'];
-				
-				
 				$name = md5($hash . '-' . $userAgent . '-' . base64_encode($font) . '-' . self::$basepath) . '.css';
 	
 				//$cssRel = Uri::root(true) . $cssPath . '/' . $name;
@@ -317,6 +317,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 			} //foreach ($fonts as $fontKey => $font)
 		} //foreach ($userAgents as $userAgent)
 
+		// Any fonts left?
 		if ($fallbacks)
 		{
 			if ($this->log)
@@ -330,6 +331,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 				}
 			}
 
+			// User selected to insert "@import url(" with Google url for failed fonts?
 			if ($this->params->get('fallback', 0) === 1)
 			{
 				$fallbackImports = array();
