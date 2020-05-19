@@ -49,7 +49,10 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 	// Marker in params to identify myself in back-end.
 	private $meMarker = '"importfontsghsvsplugin":"1"';
 
-	public static $import_lineCheck = 'https://fonts.googleapis.com/css?family=';
+	public static $import_lineCheck = array(
+		'https://fonts.googleapis.com/css',
+		'family='
+	);
 
 	public function onBeforeCompileHead()
 	{
@@ -413,11 +416,18 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 								$value = str_replace('http://', 'https://', $value);
 								$value = $subform->filterField($formFields[$property], $value);
 								
-								if (strpos($value, self::$import_lineCheck) !== 0)
-								{
+								// There are new links (see 'css2') like fonts.googleapis.com/css2?family=
+								// Therefore new check since 2020.05.19.
+								$parts = explode('?', $value, 2);
+
+								if (
+									count($parts) !== 2
+									|| (strpos($parts[0], self::$import_lineCheck[0]) !== 0
+										&& strpos($parts[1], self::$import_lineCheck[1]) !== 0)
+								){
 									$this->app->enqueueMessage(
 										Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_NO_GOOGLEAPIS_URL',
-											$value, self::$import_lineCheck), 'error'
+											$value, implode('?', self::$import_lineCheck)), 'error'
 									);
 									return false;
 								}
@@ -427,7 +437,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 								if (empty($family))
 								{
 									$msg = Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_NO_FAMILY',
-											$value, self::$import_lineCheck);
+											$value);
 
 									$this->app->enqueueMessage($msg, 'error');
 									return false;
