@@ -75,6 +75,7 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 					return false;
 				}
 			}
+
 			if (trim((string) $manifest->allowDowngrades))
 			{
 				$this->allowDowngrades = true;
