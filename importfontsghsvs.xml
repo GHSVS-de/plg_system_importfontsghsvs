@@ -21,7 +21,7 @@
 	<scriptfile>installerScript.php</scriptfile>
 	<minimumPhp>7.2.0</minimumPhp>
 	<minimumJoomla>3.9.0</minimumJoomla>
-	<maximumJoomla>4</maximumJoomla>
+	<maximumJoomla>4.0.99999999</maximumJoomla>
 
 	<files>
 		<filename plugin="importfontsghsvs">importfontsghsvs.php</filename>
