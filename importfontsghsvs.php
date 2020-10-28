@@ -352,7 +352,10 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 			Factory::getDocument()->addStyleDeclaration(implode('', $combine));
 		}
 	}
-
+	/**
+	* $table is the part that will be saved after this routine.
+	* $data is not relevant here for me.
+	*/
 	public function onExtensionBeforeSave($context, $table, $isNew, $data = array())
 	{
 		// Sanitize subform fields and some special cleanups for plg_system_importfontsghsvs.
@@ -369,11 +372,26 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 				//'filelist'
 			);
 
+			// Joomla 3
+			if (version_compare(JVERSION, '3.99999.99999', 'le'))
+			{
+				JLoader::register('FilterFieldHelper', __DIR__ . '/Helper/FilterFieldJ3.php');
+			}
+			// Joomla 4
+			else
+			{
+				JLoader::register('FilterFieldHelper', __DIR__ . '/Helper/FilterFieldJ4.php');
+			}
+
 			foreach ($this->usedSubforms as $fieldName => $file)
 			{
 				$formFields  = array();
 				$params      = new Registry($table->params);
+				
+				// What the user has entered in the subform fields.
 				$subformData = $params->get($fieldName);
+
+				// Absolute path to subform xml.
 				$file        = __DIR__ . '/myforms/' . $file . '.xml';
 				
 				if (
@@ -384,7 +402,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 					continue;
 				}
 
-				$subform = new PlgImportFontsGhsvsHelper('dummy');
+				$subform = new Joomla\CMS\Form\Form('dummy');
 				$subform->loadFile($file);
 				$xml = $subform->getXml();
 				$fieldsAsXMLArray = $xml->xpath('//field[@name=@name and not(ancestor::field/form/*)]');
@@ -399,10 +417,14 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 					$formFields[(string) $field->attributes()->name] = $field;
 				}
 
+				// Walk the subform rows.
 				foreach ($subformData as $key => $item)
 				{
 					foreach ($item as $property => $value)
 					{
+						// I don't know if it's placed correctly inside foreach.
+						$filterFieldHelper = new FilterFieldHelper();
+
 						if (array_key_exists($property, $formFields))
 						{
 							// Special for plg_system_importfontsghsvs
@@ -414,7 +436,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 								$value = str_replace(array('"', "'"), '', $value);
 								$value = str_replace('&amp;', '&', $value);
 								$value = str_replace('http://', 'https://', $value);
-								$value = $subform->filterField($formFields[$property], $value);
+								$value = $filterFieldHelper->filterField($formFields[$property], $value);
 								
 								// There are new links (see 'css2') like fonts.googleapis.com/css2?family=
 								// Therefore new check since 2020.05.19.
@@ -445,7 +467,8 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 								$subformData->$key->$property = $value;
 								continue;
 							}
-							$subformData->$key->$property = $subform->filterField($formFields[$property], $value);
+
+							$subformData->$key->$property = $filterFieldHelper->filterField($formFields[$property], $value);
 						}
 					}
 				}

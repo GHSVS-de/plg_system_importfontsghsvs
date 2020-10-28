@@ -5,10 +5,11 @@
 		label="PLG_SYSTEM_IMPORTFONTSGHSVS_IMPORT_LINE"
 		description="" />
 
-	<field name="load_in_templates" type="TemplateStyle" default=""
-	 label="PLG_SYSTEM_IMPORTFONTSGHSVS_TEMPLATES"
-	 multiple="true"
-	 description="">
+	<field name="load_in_templates" type="templatestyle" default=""
+		label="PLG_SYSTEM_IMPORTFONTSGHSVS_TEMPLATES"
+		multiple="true"
+		layout="joomla.form.field.list-fancy-select"
+		description="">
 	</field>
 
 	<field name="active" type="list" default="0"

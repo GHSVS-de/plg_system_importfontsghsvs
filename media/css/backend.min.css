@@ -34,3 +34,12 @@ button.contentToggler
 {
 	min-width:90%;
 }
+
+/* Joomla 4 */
+#fieldset-settings .column-count-lg-3,
+#fieldset-settings .column-count-md-2
+ {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+}

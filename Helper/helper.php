@@ -14,20 +14,13 @@ use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
-class PlgImportFontsGhsvsHelper extends Form
+class PlgImportFontsGhsvsHelper
 {
 	protected static $fileCount = 0;
-
-	// Extended Form class for sanitizing subforms.
-	public function filterField($element, $value)
-	{
-		return parent::filterField($element, $value);
-	}
 
 	public static function getFonts($params, $key = 'fonts') : array
 	{
