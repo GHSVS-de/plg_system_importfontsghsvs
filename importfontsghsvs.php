@@ -376,11 +376,15 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 			if (version_compare(JVERSION, '3.99999.99999', 'le'))
 			{
 				JLoader::register('FilterFieldHelper', __DIR__ . '/Helper/FilterFieldJ3.php');
+				
+				// class Form needs a value $name in __constructor
+				$constructorVariable = 'dummy';
 			}
 			// Joomla 4
 			else
 			{
 				JLoader::register('FilterFieldHelper', __DIR__ . '/Helper/FilterFieldJ4.php');
+				$constructorVariable = null;
 			}
 
 			foreach ($this->usedSubforms as $fieldName => $file)
@@ -423,7 +427,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 					foreach ($item as $property => $value)
 					{
 						// I don't know if it's placed correctly inside foreach.
-						$filterFieldHelper = new FilterFieldHelper();
+						$filterFieldHelper = new FilterFieldHelper($constructorVariable);
 
 						if (array_key_exists($property, $formFields))
 						{
