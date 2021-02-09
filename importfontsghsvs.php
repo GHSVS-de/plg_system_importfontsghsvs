@@ -118,11 +118,21 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 			$userAgents  = array($this->app->client->userAgent);
 		}
 
+		// Curl options.
+		$options = array(
+			'referer' => $_SERVER['REQUEST_URI']
+		);
+		
 		foreach ($userAgents as $userAgent)
 		{
+			// Original $userAgent for curl.
+			$userAgent_ = $userAgent;
+			
+			// "allow_url_fopen options".
 			$context    = array(
 				'http' => array(
 					'header' => 'User-Agent: ' . $userAgent,
+					'method' => 'GET',
 				)
 			);
 			
@@ -153,6 +163,9 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 					continue;
 				}
 	
+
+				if (ini_get('allow_url_fopen'))
+				{
 				/* Google Request necessary.
 				   Get the basic CSS. Extract font path. Save font and manipulated CSS locally. */
 				$response = @file_get_contents($font, false, stream_context_create($context));
@@ -165,6 +178,56 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 							Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE', $font)
 						);
 					}
+					continue;
+				}
+				}
+				elseif (function_exists('curl_init') && function_exists('curl_exec'))
+				{
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_URL, $font);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+					curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+					curl_setopt($ch, CURLOPT_USERAGENT, $userAgent_);
+				
+					if (!empty($options['referer']))
+					{
+						curl_setopt($ch, CURLOPT_REFERER, $options['referer']);
+					}
+					$response = curl_exec($ch);
+					
+					$error = curl_error($ch);
+					$curlErrorNumber = curl_errno($ch);
+					curl_close($ch);
+					
+					if (
+						$curlErrorNumber
+						|| empty($response)
+						|| !is_string($response)
+						|| !($response = trim($response))
+					){
+						if ($this->log)
+						{
+							PlgImportFontsGhsvsHelper::log(
+								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE', $font)
+							);
+							PlgImportFontsGhsvsHelper::log(
+								'Curl request failed with ' . $curlErrorNumber . ':' . $error
+							);
+						}
+						
+						continue;
+					}
+				}
+				else
+				{
+					if ($this->log)
+					{
+						PlgImportFontsGhsvsHelper::log(
+							'Can\'t request data from Google because neither allow_url_fopen nor curl_init/curl_exec is activated on your server.'
+						);
+					}
+					
 					continue;
 				}
 
