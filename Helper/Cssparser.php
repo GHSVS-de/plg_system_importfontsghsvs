@@ -1,6 +1,7 @@
 <?php
 /*
 GHSVS 2018-05-05
+https://github.com/intekhabrizvi/cssparser
 aNGEPASST für ausschließliche Nutzung mit Google Web Fonts
 */
 ?>
@@ -14,7 +15,7 @@ class PlgImportFontsGhsvsCssparser
 	public function read_from_string($str)
 	{
 		$str = $this->cleanString($str);
-		
+
 		if (!empty($str))
 		{
 			$this->raw_css = $str;
@@ -23,16 +24,16 @@ class PlgImportFontsGhsvsCssparser
 
 		return false;
 	}
-	
+
 	public function cleanString($str)
 	{
 		// Remove JS comments
 		$str = preg_replace('#/\*[^/]*\*/#', '', $str);
-	
+
 		// Remove new lines etc.
 		return trim(str_replace(array("\n", "\r", "\t"), '', $str));
 	}
-	
+
 	private function do_operation()
 	{
 		preg_match_all('/(.+?)\s?\{\s?(.+?)\s?\}/', $this->raw_css, $level1);
@@ -57,9 +58,9 @@ class PlgImportFontsGhsvsCssparser
 							$level3 = explode(":", trim($l2), 2);
 
 							$this->css[$this->clean($level1[1][$i]) . '-' . $i][$this->clean($level3[0])] = $this->clean($level3[1]);
-							
+
 							$this->css[$level1[1][$i] . '-' . $i][$level3[0]] = $level3[1];
-							
+
 							unset($level3);
 						}
 					}
@@ -78,7 +79,7 @@ class PlgImportFontsGhsvsCssparser
 		else{
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -95,7 +96,7 @@ class PlgImportFontsGhsvsCssparser
 				{
 					$results[$key1] = $css;
 					break 1;
-				}	
+				}
 			}
 		}
 		return $results;
