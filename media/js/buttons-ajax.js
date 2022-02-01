@@ -17,7 +17,7 @@ plg_system_importfontsghsvs = window.plg_system_importfontsghsvs || {};
 			var ajaxOutput = _ref.ajaxOutput;
 			var Strings = Joomla.getOptions("plg_system_importfontsghsvs");
 
-			ajaxOutput.innerHTML = "<pre>" + Strings.bePatient + "";
+			ajaxOutput.innerHTML = "<pre class=pre4logOutput>" + Strings.bePatient + "";
 
     	Joomla.request({
 				url: url,
@@ -29,10 +29,10 @@ plg_system_importfontsghsvs = window.plg_system_importfontsghsvs || {};
           	var json = JSON.parse(response);
           	if (json && json.html)
 						{
-            	ajaxOutput.innerHTML = "<pre>" + json.html + "</pre>";
+            	ajaxOutput.innerHTML = "<pre class=pre4logOutput>" + json.html + "</pre>";
           	}
         	} catch (e) {
-						ajaxOutput.innerHTML = "<pre>" + Strings.ajaxError
+						ajaxOutput.innerHTML = "<pre class=pre4logOutput>" + Strings.ajaxError
 						+ "<br>" + e
 						+ "<br>Response:<br>" + htmlEntities(response)
 						+ "</pre>";
