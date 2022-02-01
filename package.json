@@ -17,7 +17,9 @@
 	},
 	"releaseTxt": {
 		"title": "Joomla system plugin ImportFontsGhsvs",
-		"requires": []
+		"requires": [
+			"Joomla's /media/ folder or at least /media/plg_sytem_importfonts/font/ must be writable for PHP (Joomla)."
+		]
 	},
 	"changelog": {
 		"projecturl": "https://github.com/GHSVS-de/plg_system_importfontsghsvs",
