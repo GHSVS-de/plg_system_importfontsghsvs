@@ -83,6 +83,11 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 			return false;
 		}
 
+		if ($type === 'update')
+		{
+			$this->removeOldUpdateservers();
+		}
+
 		return true;
 	}
 
