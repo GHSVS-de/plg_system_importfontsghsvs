@@ -47,7 +47,7 @@ class ImportfontsGhsvsHelper
 		return $require;
 	}
 
-	/**
+	/*
 	Google returned a CSS with URLs to web font files.
 	SVG files don't have a file extender but query and fragment
 	https://fonts.gstatic.com/l/font?kit=KFOmCnqEu92Fr1Mu4mxN&skey=a0a0114a1dcab3ac&v=v18#Roboto
