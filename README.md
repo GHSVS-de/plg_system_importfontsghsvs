@@ -25,7 +25,7 @@
 ## PHP Codestyle
 If you think it's worth it.
 - `cd /mnt/z/git-kram/php-cs-fixer-ghsvs`
-- `npm run plg_system_importfontsghsvssDry` (= dry test run).
+- `npm run plg_system_importfontsghsvsDry` (= dry test run).
 - `npm run plg_system_importfontsghsvs` (= cleans code).
 - `cd /mnt/z/git-kram/plg_system_importfontsghsvs` (back to this repo).
 
