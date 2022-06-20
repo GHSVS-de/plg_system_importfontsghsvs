@@ -2,8 +2,8 @@
 	"name": "plg_system_importfontsghsvs",
 	"nameReal": "plg_system_importfontsghsvs",
 	"filename": "importfontsghsvs",
-	"version": "2022.02.01",
-	"versionCompare": "2021.02.09",
+	"version": "2022.06.20",
+	"versionCompare": "2022.02.01",
 	"update": {
 		"type": "plugin",
 		"folder": "system",
@@ -19,6 +19,11 @@
 		"title": "Joomla system plugin ImportFontsGhsvs",
 		"requires": [
 			"Joomla's /media/ folder or at least /media/plg_sytem_importfonts/font/ must be writable for PHP (Joomla)."
+		],
+		"uses": [],
+		"language": [
+			"de-DE",
+			"en-GB"
 		]
 	},
 	"changelog": {
@@ -29,9 +34,10 @@
 		"docsEN": "",
 		"lastTests": [
 			"PHP 8.0",
+			"PHP 8.1",
 			"PHP 7.4",
-			"Joomla 3.10.5",
-			"Joomla 4.0.6"
+			"Joomla 3.10",
+			"Joomla 4.1"
 		]
 	},
 	"minimumPhp": "7.4.0",
@@ -44,13 +50,11 @@
 	"copyright": "(C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer.",
 	"author": {
 		"name": "G@HService Berlin Neukölln, Volkmar Volli Schlothauer",
-		"email": "",
 		"url": "https://ghsvs.de"
 	},
 	"contributors": [
 		{
 			"name": "G@HService Berlin Neukölln, Volkmar Volli Schlothauer",
-			"email": "",
 			"url": "https://ghsvs.de"
 		}
 	],
@@ -69,18 +73,11 @@
 		"url": "https://github.com/GHSVS-de/plg_system_importfontsghsvs.git"
 	},
 	"scripts": {
-		"g-build": "node build.js",
-    "g-npm-update-check": "npm outdated",
-    "g-npm-update": "npm update --save-dev"
+		"build": "node build.js",
+		"updateCheck": "npm outdated",
+		"update": "npm update --save-dev"
 	},
-	"dependencies": {
-	},
-	"devDependencies": {
-		"adm-zip": "^0.5.9",
-		"picocolors": "^1.0.0",
-		"fs-extra": "10.0.0",
-		"path": "^0.12.7",
-		"rimraf": "3.0.2"
-	},
+	"dependencies": {},
+	"devDependencies": {},
 	"browserslist": []
 }
