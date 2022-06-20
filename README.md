@@ -15,12 +15,12 @@
 - Prepare/adapt `./package.json`.
 - `cd /mnt/z/git-kram/plg_system_importfontsghsvs`
 
-## node/npm installation/updates
-- If not done yet: `npm install`
+## node/npm updates/installation
+- `npm install` (if never done before)
 
-### Update
-- `npm run g-npm-update-check` or (faster) `npm outdated"`
-- `npm run g-npm-update` (if needed) or (faster) `npm update --save-dev`
+### Update dependencies
+- `npm run updateCheck` or (faster) `npm outdated`
+- `npm run update` (if needed) or (faster) `npm update --save-dev`
 
 ## PHP Codestyle
 If you think it's worth it.
