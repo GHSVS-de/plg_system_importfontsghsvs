@@ -7,18 +7,20 @@ Usage:
 Inserts Ajax-Buttons for Log File.
 
 */
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Plugin\PluginHelper;
 
 class plgSystemimportfontsghsvsFormFieldLogButtons extends FormField
 {
 	protected $type         = 'logbuttons';
+
 	protected $renderLayout = 'renderfield';
+
 	protected $myLayoutPath = 'plugins/system/importfontsghsvs/src/Layout';
 
 	protected function getInput()
@@ -28,41 +30,46 @@ class plgSystemimportfontsghsvsFormFieldLogButtons extends FormField
 		if (PluginHelper::isEnabled('system', 'importfontsghsvs'))
 		{
 			HTMLHelper::_('behavior.core');
-			$files = array(
+			$files = [
 				'buttons-ajax.js',
 				'log-buttons.js',
-			);
+			];
 
 			foreach ($files as $file)
 			{
-				HTMLHelper::_('script',
+				HTMLHelper::_(
+					'script',
 					'plg_system_importfontsghsvs/' . $file,
-					array(
+					[
 						'relative' => true,
-						'version' => 'auto'
-					),
-					array(
-						'defer' => true
-					)
+						'version' => 'auto',
+					],
+					[
+						'defer' => true,
+					]
 				);
 			}
 
 			Factory::getDocument()->addScriptOptions(
 				'plg_system_importfontsghsvs',
-				array(
+				[
 					'ajaxError' => Text::sprintf(
-						'PLG_SYSTEM_IMPORTFONTSGHSVS_AJAX_ERROR'),
+						'PLG_SYSTEM_IMPORTFONTSGHSVS_AJAX_ERROR'
+					),
 					'bePatient' => Text::sprintf(
-						'PLG_SYSTEM_IMPORTFONTSGHSVS_BE_PATIENT')
+						'PLG_SYSTEM_IMPORTFONTSGHSVS_BE_PATIENT'
+					),
 
-				)
+				]
 			);
 		}
 		else
 		{
 			$offHint = Text::_('PLG_SYSTEM_IMPORTFONTSGHSVS_BUTTONS_INACTIVE');
+
 			return $offHint;
 		}
+
 		return '
 		<div id=logButtonsContainer>
 			<div><button class=showFilePath>'
@@ -80,11 +87,11 @@ class plgSystemimportfontsghsvsFormFieldLogButtons extends FormField
 
 	public function getLayoutPaths()
 	{
-		$customPaths      = array(JPATH_SITE . '/' . $this->myLayoutPath);
+		$customPaths      = [JPATH_SITE . '/' . $this->myLayoutPath];
 		$defaultPaths     = new FileLayout('');
 		$defaultPaths     = $defaultPaths->getDefaultIncludePaths();
 		$parentFieldPaths = parent::getLayoutPaths();
+
 		return array_merge($customPaths, $defaultPaths, $parentFieldPaths);
 	}
-
 }

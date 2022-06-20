@@ -18,7 +18,7 @@ If attributs loadjs or loadcss are missing their default value is TRUE => Assets
 
 */
 ?><?php
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -39,32 +39,35 @@ class plgSystemImportFontsGhsvsFormFieldAssetsBe extends FormField
 
 		if ($loadcss !== 'false')
 		{
-			HTMLHelper::_('stylesheet',
+			HTMLHelper::_(
+				'stylesheet',
 				$file . '.css',
-				array(
+				[
 					'relative' => true,
-					'version' => 'auto'
-				),
-				array(
-					'defer' => true
-				)
+					'version' => 'auto',
+				],
+				[
+					'defer' => true,
+				]
 			);
 		}
 
 		if ($loadjs !== 'false')
 		{
 			HTMLHelper::_('jquery.framework');
-			HTMLHelper::_('script',
+			HTMLHelper::_(
+				'script',
 				$file . '.js',
-				array(
+				[
 					'relative' => true,
-					'version' => 'auto'
-				),
-				array(
-					'defer' => true
-				)
+					'version' => 'auto',
+				],
+				[
+					'defer' => true,
+				]
 			);
 		}
+
 		return '';
 	}
 

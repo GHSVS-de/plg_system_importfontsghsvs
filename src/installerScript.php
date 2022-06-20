@@ -1,10 +1,9 @@
 <?php
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerScript;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\Factory;
 
 class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 {
@@ -114,12 +113,12 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 	{
 		$this->deleteFiles[] =
 			str_replace(
-				JPATH_ROOT, '',
+				JPATH_ROOT,
+				'',
 				Factory::getApplication()->get('log_path') . '/plg_system_importfonts-log.txt'
 			);
 		$this->removeFiles();
 	}
-
 
 	/**
 	* Remove the outdated updateservers.
@@ -150,8 +149,8 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 				return;
 			}
 
-			$ids = \array_keys($ids);
-			$ids =\implode(',', $ids);
+			$ids = array_keys($ids);
+			$ids =implode(',', $ids);
 
 			// Delete from update sites
 			$db->setQuery(
@@ -171,5 +170,5 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 		{
 			return;
 		}
- 	}
+	}
 }

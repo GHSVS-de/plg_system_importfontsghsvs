@@ -20,6 +20,7 @@ class FilterFieldHelper extends FormField
 		$this->element = $element;
 		$this->type = (string) $element->attributes()->type;
 		$result = parent::filter($value);
+
 		return $result;
 	}
 }

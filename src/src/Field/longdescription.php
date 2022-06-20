@@ -33,7 +33,7 @@ Only 1 occurence is allowed.
 To create a headline.
 */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 #use Joomla\CMS\HTML\HTMLHelper;
@@ -84,18 +84,20 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 
 					if (strpos($no_nl[0], '/') === 0)
 					{
-					 $content = file_get_contents(JPATH_SITE . '/' . $no_nl[0]);
+						$content = file_get_contents(JPATH_SITE . '/' . $no_nl[0]);
 					}
 					else
 					{
 						$lang = Factory::getLanguage();
-						$paths = array(
+						$paths = [
 							JPATH_SITE . '/' . $this->myLanguagePath . '/' . $lang->getTag(),
 							JPATH_SITE . '/' . $this->myLanguagePath . '/' . $lang->getDefault(),
-						);
+						];
+
 						foreach ($paths as $path)
 						{
 							$path .= '/' . $no_nl[0];
+
 							if (false !== ($content = @file_get_contents($path)))
 							{
 								break;
@@ -114,6 +116,7 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 		}
 
 		$headline = '';
+
 		if (strpos($descriptiontext, '{HEAD-LINE:') !== false)
 		{
 			preg_match('/{HEAD-LINE:([^}]+)}/', $descriptiontext, $matches);
@@ -126,7 +129,7 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 		}
 		unset($matches);
 
-		$html = array('<div class="longdesription descriptiontext ' . $additionalClass . '">');
+		$html = ['<div class="longdesription descriptiontext ' . $additionalClass . '">'];
 		$html[] = $headline;
 
 		if ($contentToggler)
@@ -150,7 +153,7 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 
 		if ($contentToggler && !self::$loaded)
 		{
-			$js = str_replace(array("\n", "\t"), '', ';document.addEventListener("click", function(event)
+			$js = str_replace(["\n", "\t"], '', ';document.addEventListener("click", function(event)
 {
 	var element = event.target;
 	var content = document.getElementById(element.getAttribute("data-togglercontent"));
@@ -160,7 +163,7 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 		content.classList.toggle("isVisible");
 	}
 }, false);');
-			$css = str_replace(array("\n", "\t", " "), '', '.togglerContent
+			$css = str_replace(["\n", "\t", " "], '', '.togglerContent
 {
 	display: none;
 }
@@ -187,7 +190,7 @@ class plgSystemImportFontsGhsvsFormFieldLongDescription extends FormField
 	 */
 	public function getLayoutPaths()
 	{
-		$customPaths = array(JPATH_SITE . '/' . $this->myLayoutPath);
+		$customPaths = [JPATH_SITE . '/' . $this->myLayoutPath];
 
 		$defaultPaths = new FileLayout('');
 		$defaultPaths = $defaultPaths->getDefaultIncludePaths();

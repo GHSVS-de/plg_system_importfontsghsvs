@@ -14,6 +14,7 @@ namespace Joomla\Plugin\System\ImportfontsGhsvs\Helper;
 class Cssparser
 {
 	protected $raw_css;
+
 	protected $css;
 
 	public function read_from_string($str)
@@ -23,6 +24,7 @@ class Cssparser
 		if (!empty($str))
 		{
 			$this->raw_css = $str;
+
 			return $this->do_operation();
 		}
 
@@ -35,7 +37,7 @@ class Cssparser
 		$str = preg_replace('#/\*[^/]*\*/#', '', $str);
 
 		// Remove new lines etc.
-		return trim(str_replace(array("\n", "\r", "\t"), '', $str));
+		return trim(str_replace(["\n", "\r", "\t"], '', $str));
 	}
 
 	private function do_operation()
@@ -43,17 +45,17 @@ class Cssparser
 		preg_match_all('/(.+?)\s?\{\s?(.+?)\s?\}/', $this->raw_css, $level1);
 		unset($this->raw_css);
 
-		if (count($level1) == 3)
+		if (\count($level1) == 3)
 		{
-			$parent = count($level1[1]);
-			$parent_value = count($level1[2]);
+			$parent = \count($level1[1]);
+			$parent_value = \count($level1[2]);
 
 			if ($parent == $parent_value)
 			{
-				for($i=0; $i < $parent; $i++)
+				for ($i=0; $i < $parent; $i++)
 				{
 					//$this->css[trim($level1[1][$i])] = explode(";",trim($level1[2][$i]));
-					$level2 = explode(";",trim($level1[2][$i]));
+					$level2 = explode(";", trim($level1[2][$i]));
 
 					foreach ($level2 as $l2)
 					{
@@ -80,7 +82,8 @@ class Cssparser
 			var_dump($this->css);*/
 			unset($level1);
 		}
-		else{
+		else
+		{
 			return false;
 		}
 
@@ -89,7 +92,7 @@ class Cssparser
 
 	public function find_parent_by_property($property)
 	{
-		$results  = array();
+		$results  = [];
 		$property = $this->clean($property);
 
 		foreach ($this->css as $key1 => $css)
@@ -99,10 +102,11 @@ class Cssparser
 				if ($key2 == $property)
 				{
 					$results[$key1] = $css;
-					break 1;
+					break ;
 				}
 			}
 		}
+
 		return $results;
 	}
 

@@ -11,8 +11,7 @@ to get rid of this f**** <div class="controls">
 by using custom JLayout plugins/system/importfontsghsvs/src/Layout/renderfield.php
 */
 
-
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Layout\FileLayout;
@@ -24,6 +23,7 @@ class plgSystemImportFontsGhsvsFormFieldSubformLayout extends JFormFieldSubform
 	protected $type = 'subformlayout';
 
 	protected $renderLayout = 'renderfield';
+
 	protected $myLayoutPath = 'plugins/system/importfontsghsvs/src/Layout';
 
 	// Debugge Render-Pfade der Felder-Layouts und Fehler:
@@ -38,7 +38,7 @@ class plgSystemImportFontsGhsvsFormFieldSubformLayout extends JFormFieldSubform
 	 */
 	public function getLayoutPaths()
 	{
-		$customPaths = array(JPATH_SITE . '/' . $this->myLayoutPath);
+		$customPaths = [JPATH_SITE . '/' . $this->myLayoutPath];
 
 		$defaultPaths = new FileLayout('');
 		$defaultPaths = $defaultPaths->getDefaultIncludePaths();

@@ -4,7 +4,7 @@
  * @license  GNU General Public License version 3 or later; see LICENSE.txt
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Factory;
@@ -15,43 +15,45 @@ FormHelper::loadFieldClass('list');
 
 class plgSystemImportFontsGhsvsFormFieldTemplates extends JFormFieldList
 {
- public $type = 'Templates';
+	public $type = 'Templates';
 
- protected function getOptions()
- {
-  $options = array();
+	protected function getOptions()
+	{
+		$options = [];
 
-  $client = ApplicationHelper::getClientInfo('site', true);
+		$client = ApplicationHelper::getClientInfo('site', true);
 
-  $db = Factory::getDBO();
-  $query = $db->getQuery(true);
+		$db = Factory::getDBO();
+		$query = $db->getQuery(true);
 
-  $query->select('s.id, s.title, e.name as name, s.template');
-  $query->from('#__template_styles as s');
-  $query->where('s.client_id = ' . (int) $client->id);
-  $query->order('template');
-  $query->order('title');
-  $query->join('LEFT', '#__extensions as e on e.element=s.template');
-  $query->where('e.enabled=1');
-  $query->where($db->quoteName('e.type') . '=' . $db->quote('template'))
+		$query->select('s.id, s.title, e.name as name, s.template');
+		$query->from('#__template_styles as s');
+		$query->where('s.client_id = ' . (int) $client->id);
+		$query->order('template');
+		$query->order('title');
+		$query->join('LEFT', '#__extensions as e on e.element=s.template');
+		$query->where('e.enabled=1');
+		$query->where($db->quoteName('e.type') . '=' . $db->quote('template'))
   ->group('template')
   ;
 
-  $db->setQuery($query);
+		$db->setQuery($query);
 
-  if ($error = $db->getErrorMsg()) {
-   throw new Exception($error);
-  }
+		if ($error = $db->getErrorMsg())
+		{
+			throw new Exception($error);
+		}
 
-  $templates = $db->loadObjectList();
+		$templates = $db->loadObjectList();
 
-  foreach ($templates as $item) {
-   $options[] = HTMLHelper::_('select.option', $item->template, $item->template);
-  }
+		foreach ($templates as $item)
+		{
+			$options[] = HTMLHelper::_('select.option', $item->template, $item->template);
+		}
 
-  // Merge any additional options in the XML definition.
-  $options = array_merge(parent::getOptions(), $options);
+		// Merge any additional options in the XML definition.
+		$options = array_merge(parent::getOptions(), $options);
 
-  return $options;
- }
+		return $options;
+	}
 }

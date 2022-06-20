@@ -1,4 +1,5 @@
 <?php
+
 namespace Joomla\Plugin\System\ImportfontsGhsvs\Helper;
 
 \defined('_JEXEC') or die;
@@ -17,11 +18,11 @@ class ImportfontsGhsvsHelper
 
 	public static function getFonts($params, $key = 'fonts') : array
 	{
-		$require = array();
+		$require = [];
 		$fonts   = $params->get($key, null);
 		$i = 0;
 
-		if (is_object($fonts) && count(get_object_vars($fonts)))
+		if (\is_object($fonts) && \count(get_object_vars($fonts)))
 		{
 			// Bug fix: Some stupid plugins still "destroy" $templateStyle->id.
 			$templateStyle = Factory::getApplication()->getTemplate(true);
@@ -35,8 +36,8 @@ class ImportfontsGhsvsHelper
 				if (
 					$font->get('active', 0) === 1
 					&& ($import_line = $font->get('import_line', ''))
-					&& (empty($load_in_templates) || in_array($templateStyle, $load_in_templates))
-				){
+					&& (empty($load_in_templates) || \in_array($templateStyle, $load_in_templates))
+				) {
 					$require[$i]['import_line'] = $import_line;
 					$require[$i]['family'] = ApplicationHelper::stringURLSafe($font->get('family', ''));
 					$i++;
@@ -44,6 +45,7 @@ class ImportfontsGhsvsHelper
 			}
 		}
 		sort($require);
+
 		return $require;
 	}
 
@@ -71,25 +73,27 @@ class ImportfontsGhsvsHelper
 
 			if (!$ext)
 			{
-			 $muster = '/ format\(([^)]+)\)/';
-			 preg_match($muster, $src, $matches);
+				$muster = '/ format\(([^)]+)\)/';
+				preg_match($muster, $src, $matches);
 
-			 if (!empty($matches[1]))
-			 {
+				if (!empty($matches[1]))
+				{
 					$ext = trim($matches[1], '"\'');
-			 }
-			 else
-			 {
+				}
+				else
+				{
 					$ext = 'EOT';
-			 }
+				}
 			}
-			$fontFile = $path . '/' . md5($query) . $fragment . '.' .$ext;
-			return array($fontFile, $fragment ? '#' . $fragment : '');
+			$fontFile = $path . '/' . md5($query) . $fragment . '.' . $ext;
+
+			return [$fontFile, $fragment ? '#' . $fragment : ''];
 		}
 		elseif (!empty($path))
 		{
-			return array($path, '');
+			return [$path, ''];
 		}
+
 		return false;
 	}
 
@@ -101,7 +105,7 @@ class ImportfontsGhsvsHelper
 		{
 			$data = \PlgSystemImportFontsGhsvs::removeJPATH_SITE(strip_tags($data));
 
-			$lines = array();
+			$lines = [];
 
 			if (is_file($logFile))
 			{
@@ -125,11 +129,12 @@ class ImportfontsGhsvsHelper
 
 	public static function getFolderSize($dir)
 	{
-    $folderSize = self::folderSize($dir);
+		$folderSize = self::folderSize($dir);
 		$folderSize = HTMLHelper::_('number.bytes', $folderSize);
-		$folderSize = array($folderSize, self::$fileCount);
+		$folderSize = [$folderSize, self::$fileCount];
 		self::$fileCount = 0;
-    return $folderSize;
+
+		return $folderSize;
 	}
 
 	/*
@@ -137,14 +142,15 @@ class ImportfontsGhsvsHelper
 	*/
 	protected static function folderSize($dir)
 	{
-    $bytes = 0;
+		$bytes = 0;
 
-    foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each)
+		foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each)
 		{
 			self::$fileCount++;
 			$bytes += is_file($each) ? (int) filesize($each) : (int) self::folderSize($each);
-    }
-    return $bytes;
+		}
+
+		return $bytes;
 	}
 
 	public static function renewal($fontPath, $renewalLog)
@@ -158,17 +164,24 @@ class ImportfontsGhsvsHelper
 
 		if (Folder::exists($fontPath))
 		{
-			$msg = Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_DELETE_FONT_PATH',
-				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($fontPath));
+			$msg = Text::sprintf(
+				'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_DELETE_FONT_PATH',
+				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($fontPath)
+			);
+
 			return $msg;
 		}
 
 		if (!File::write($renewalLog, time()))
 		{
-			$msg = Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_WRITE_RENEWAL_FILE',
-				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($renewalLog));
+			$msg = Text::sprintf(
+				'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_WRITE_RENEWAL_FILE',
+				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($renewalLog)
+			);
+
 			return $msg;
 		}
-    return true;
+
+		return true;
 	}
 }
