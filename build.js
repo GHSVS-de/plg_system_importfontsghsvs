@@ -55,13 +55,7 @@ const pathMedia = `./media`;
 		)
 	);
 
-	if (!(await fse.exists("./dist")))
-	{
-		await fse.mkdir("./dist"
-		).then(
-			answer => console.log(pc.yellow(pc.bold(`Created "./dist".`)))
-		);
-  }
+	await helper.mkdir('./dist');
 
 	const zipFilename = `${name}-${version}.zip`;
 
