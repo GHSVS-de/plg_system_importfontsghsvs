@@ -302,7 +302,7 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 
 					if ($parents[$key]['urlGoogle'])
 					{
-						$foundGoogleUrls[] = $parents[$key]['urlGoogle'];
+						$foundGoogleUrls[$parents[$key]['urlGoogle']] = 0;
 					}
 					else
 					{
@@ -348,7 +348,9 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 						. $fontFile[0] . $fontFile[1] . '"';
 					$response = str_replace($parents[$key]['urlGoogle'], $localUrl, $response, $count);
 
-					if ($this->log && !$count)
+					$foundGoogleUrls[$parents[$key]['urlGoogle']] += $count;
+
+					if ($this->log && !$foundGoogleUrls[$parents[$key]['urlGoogle']])
 					{
 						ImportfontsGhsvsHelper::log(
 							Text::sprintf(
@@ -398,7 +400,10 @@ class PlgSystemImportFontsGhsvs extends CMSPlugin
 				} // end - foreach ($parents as $key => $fontFace)
 
 				// Hard core cleanup.
-				$response = str_replace($foundGoogleUrls, '', $response);
+				foreach ($foundGoogleUrls as $gUrl => $anzahl)
+				{
+					$response = str_replace($gUrl, '', $response);
+				}
 
 				$response = $saveUserAgent . $cssparser->cleanString($response);
 
