@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" client="site" group="system" method="upgrade">
+	<name>PLG_SYSTEM_IMPORTFONTSGHSVS</name>
+	<author>G@HService Berlin Neukölln, Volkmar Volli Schlothauer</author>
+	<creationDate>2019-02-19</creationDate>
+	<copyright>(C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer.</copyright>
+	<license>GNU General Public License version 3 or later; see LICENSE.txt.</license>
+	<authorUrl>https://ghsvs.de</authorUrl>
+	<version>2023.10.21</version>
+	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
+
+	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/plg_system_importfontsghsvs-update.xml</server></updateservers>
+
+	<infourl>https://github.com/GHSVS-de/plg_system_importfontsghsvs/releases/tag/2023.10.21</infourl>
+
+	<scriptfile>installerScript.php</scriptfile>
+	<minimumPhp>7.4.0</minimumPhp>
+	<maximumPhp></maximumPhp>
+	<minimumJoomla>3.10.4</minimumJoomla>
+	<maximumJoomla>5.9999.9999</maximumJoomla>
+	<allowDowngrades>1</allowDowngrades>
+
+	<files>
+		<filename plugin="importfontsghsvs">importfontsghsvs.php</filename>
+		<filename>installerScript.php</filename>
+		<filename>LICENSE.txt</filename>
+		<folder>language</folder>
+		<folder>src</folder>
+	</files>
+
+	<media destination="plg_system_importfontsghsvs" folder="media">
+		<folder>css</folder>
+		<folder>font</folder>
+		<folder>js</folder>
+	</media>
+
+	<namespace path="src">Joomla\Plugin\System\ImportfontsGhsvs</namespace>
+
+	<config>
+  	<fields name="params" addfieldpath="plugins/system/importfontsghsvs/src/Field">
+
+			<fieldset name="basic">
+
+				<field type="hidden" default="1" name="importfontsghsvsplugin"/>
+
+				<field name="version" type="plgSystemImportFontsGhsvs.version"
+					label="JVERSION"/>
+
+				<field name="frontendonSpacer" type="note" close="true"
+					class="alert alert-danger"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_FRONTENDON"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_FRONTENDON_DESC"/>
+
+				<field name="frontendon" type="list" default="0" filter="integer"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_FRONTENDON">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="assetsbe" type="plgSystemImportFontsGhsvs.assetsbe"
+					hidden="true" loadjs="false" loadcss="true"/>
+
+			</fieldset>
+
+			<fieldset name="settings" label="PLG_SYSTEM_IMPORTFONTSGHSVS_FONTS">
+
+				<field name="fonts" type="plgSystemImportFontsGhsvs.subformlayout"
+					min="1" max="100"
+					multiple="true"
+					label="" description=""
+					hiddenLabel="true"
+					formsource="plugins/system/importfontsghsvs/src/Form/fonts-subform.xml"
+					layout="joomla.form.field.subform.repeatable" groupByFieldset="false"
+					default='{"fonts0":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Roboto:400,400i,700,700i\u0026display=swap","active":"0"},"fonts1":{"import_line":"https:\/\/fonts.googleapis.com\/css?family=Open+Sans\u0026display=swap\u0026subset=latin-ext","active":"0"}}'/>
+
+			</fieldset>
+
+			<fieldset name="debugAndMore"
+				label="PLG_SYSTEM_IMPORTFONTSGHSVS_DEBUG_AND_MORE">
+
+				<field name="debugAndMoreSpacer" type="note" close="true"
+					class="alert alert-danger"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_DEBUG_AND_MORE_DESC"/>
+
+				<field name="renewalHeadline" type="note"
+					class="alert alert-info p-1 m-0 w-100"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_RENEWALHEADLINE"/>
+
+				<field name="renewalNote" type="note" close="true"
+					class="alert alert-warning m-0"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_RENEWAL"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_RENEWAL_DESC"/>
+
+				<field name="renewal" type="number" default="90" filter="integer"
+					min="1" max="730"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_RENEWAL"/>
+
+				<field name="renewalbuttons"
+					type="plgSystemImportFontsGhsvs.renewalbuttons"
+					hiddenLabel="true"/>
+
+				<field name="debugHeadline" type="note"
+					class="alert alert-info p-1 m-0 w-100"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_DEBUGHEADLINE"/>
+
+				<field name="logNote" type="note" close="true"
+					class="alert alert-warning m-0"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_LOGNOTE_DESC"/>
+
+				<field name="log" type="list" default="0" filter="integer"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_LOG"
+					class="switcher btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="logbuttons" type="plgSystemImportFontsGhsvs.logbuttons"
+					hiddenLabel="true"/>
+
+				<field name="othersHeadline" type="note"
+					class="alert alert-info p-1 m-0 w-100"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_OTHERSHEADLINE"/>
+
+				<field name="writeAgentInCssFile" type="list" default="0"
+					filter="integer"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_WRITEAGENTINCSSFILE"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_WRITEAGENTINCSSFILE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="fallback" type="list" default="0" filter="integer"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_FALLBACK"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_FALLBACK_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="robots" type="list" default="0" filter="integer"
+					label="PLG_SYSTEM_IMPORTFONTSGHSVS_ROBOTS"
+					description="PLG_SYSTEM_IMPORTFONTSGHSVS_ROBOTS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="runStandardAgents" type="hidden" default="0"/>
+
+			</fieldset>
+
+	  </fields>
+ 	</config>
+</extension>
