@@ -22,13 +22,6 @@
 - `npm run updateCheck` or (faster) `npm outdated`
 - `npm run update` (if needed) or (faster) `npm update --save-dev`
 
-## PHP Codestyle
-If you think it's worth it.
-- `cd /mnt/z/git-kram/php-cs-fixer-ghsvs`
-- `npm run plg_system_importfontsghsvsDry` (= dry test run).
-- `npm run plg_system_importfontsghsvs` (= cleans code).
-- `cd /mnt/z/git-kram/plg_system_importfontsghsvs` (back to this repo).
-
 ## Build installable ZIP package
 - `node build.js`
 - New, installable ZIP is in `./dist` afterwards.
