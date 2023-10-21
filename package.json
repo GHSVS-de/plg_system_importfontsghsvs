@@ -2,16 +2,18 @@
 	"name": "plg_system_importfontsghsvs",
 	"nameReal": "plg_system_importfontsghsvs",
 	"filename": "importfontsghsvs",
-	"version": "2022.08.22",
-	"versionCompare": "2022.06.20",
+	"version": "2023.10.21",
+	"versionCompare": "2022.08.22",
 	"update": {
+		"infourl": "https://github.com/GHSVS-de/plg_system_importfontsghsvs{{thisRelease}}",
 		"type": "plugin",
 		"folder": "system",
 		"client": "site",
 		"tag": "stable",
 		"targetplatform": [
 			"3.*",
-			"4.*"
+			"4.*",
+			"5.*"
 		],
 		"namespace": "Joomla\\Plugin\\System\\ImportfontsGhsvs"
 	},
@@ -33,18 +35,18 @@
 		"docsDE": "",
 		"docsEN": "",
 		"lastTests": [
-			"PHP 8.0",
+			"PHP 8.2",
 			"PHP 8.1",
 			"PHP 7.4",
 			"Joomla 3.10",
-			"Joomla 4.1",
-			"Joomla 4.2"
+			"Joomla 4.3",
+			"Joomla 5.0"
 		]
 	},
 	"minimumPhp": "7.4.0",
-	"maximumPhp": "8.9999.9999",
+	"maximumPhp": "",
 	"minimumJoomla": "3.10.4",
-	"maximumJoomla": "4.9999.9999",
+	"maximumJoomla": "5.9999.9999",
 	"allowDowngrades": "1",
 	"creationDate": "2019-02-19",
 	"licenseLong": "GNU General Public License version 3 or later; see LICENSE.txt.",
