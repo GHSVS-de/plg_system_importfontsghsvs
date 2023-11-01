@@ -12,7 +12,10 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\Cssparser;
 use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\ImportfontsGhsvsHelper;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\FilterFieldHelper;
 use Joomla\Registry\Registry;
+use Joomla\Event\DispatcherInterface;
+use Exception;
 
 \defined('_JEXEC') or die;
 
@@ -20,7 +23,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 {
 	protected $autoloadLanguage = true;
 
-	protected static $basepath = 'plg_system_importfontsghsvs';
+	protected $basepath = 'plg_system_importfontsghsvs';
 
 	protected $execute = null;
 
@@ -30,7 +33,23 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 	protected $log = null;
 
-	public static $logFile = null;
+	public $logFile = null;
+
+	/**
+		* The ImportfontsGhsvsHelper helper
+		*
+		* @var    ImportfontsGhsvsHelper
+		* @since 2023.11.01
+		*/
+	private $helper;
+
+	/**
+		* The Cssparser helper
+		*
+		* @var    Cssparser
+		* @since 2023.11.01
+		*/
+	private $cssparser;
 
 	// Custom subform extending field to clean by filter="something" when saving.
 	private $usedSubforms = [
@@ -41,10 +60,22 @@ final class ImportfontsGhsvs extends CMSPlugin
 	// Marker in params to identify myself in back-end.
 	private $meMarker = '"importfontsghsvsplugin":"1"';
 
-	public static $import_lineCheck = [
+	public $import_lineCheck = [
 		'https://fonts.googleapis.com/css',
 		'family=',
 	];
+
+	public function __construct(
+		DispatcherInterface $dispatcher,
+		array $config,
+		ImportfontsGhsvsHelper $helper,
+		Cssparser $cssparser
+	){
+		parent::__construct($dispatcher, $config);
+
+		$this->cssparser = $cssparser;
+		$this->helper = $helper;
+	}
 
 	public function onBeforeCompileHead()
 	{
@@ -62,7 +93,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 		if (time() > ((int) $firstDate + $this->params->get('renewal', 30) * 24 * 60 * 60))
 		{
-			$success = ImportfontsGhsvsHelper::renewal(
+			$success = $this->helper->renewal(
 				$this->fontPath,
 				$this->renewalLog
 			);
@@ -71,21 +102,22 @@ final class ImportfontsGhsvs extends CMSPlugin
 			{
 				if ($this->log)
 				{
-					ImportfontsGhsvsHelper::log($success);
+					$this->helper->log($success);
 				}
 
 				return;
 			}
 		}
 
-		if (!($fonts = ImportfontsGhsvsHelper::getFonts($this->params)))
+		if (!($fonts = $this->helper->getFonts($this->params)))
 		{
 			if ($this->log)
 			{
-				ImportfontsGhsvsHelper::log(
+				$this->helper->log(
 					Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_NO_ACTIVE_FONT_LINK_FOUND')
 				);
 			}
+			// goOn($refresh = false, $force = null)
 			$this->goOn(true, false);
 
 			return;
@@ -94,7 +126,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 		$combine    = [];
 		$cssPath    = $this->fontPath . '/css';
 		$fallbacks  = $fonts;
-		$hash       = md5(Factory::getConfig()->get('secret'));
+		$hash       = md5($this->getApplication()->get('secret'));
 		// Extraction pattern for 'url(...)' parts in 'src' value.
 		$urlPartPattern = '/url\(([^)]+)\)/';
 
@@ -102,7 +134,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 		if ($this->params->get('runStandardAgents', 0) === 100)
 		{
 			$userAgents = [
-				// 'me' => $this->app->client->userAgent,
+				// 'me' => $this->getApplication()->client->userAgent,
 				'eot' => 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
 				'woff' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0',
 				'woff2' => 'Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0',
@@ -112,7 +144,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 		}
 		else
 		{
-			$userAgents  = [$this->app->client->userAgent];
+			$userAgents  = [$this->getApplication()->client->userAgent];
 		}
 
 		// Curl options.
@@ -146,7 +178,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 			foreach ($fonts as $fontKey => $fontArray)
 			{
 				$font = $fontArray['import_line'];
-				$name = md5($hash . '-' . $userAgent . '-' . base64_encode($font) . '-' . self::$basepath) . '.css';
+				$name = md5($hash . '-' . $userAgent . '-' . base64_encode($font) . '-' . $this->basepath) . '.css';
 				$cssAbs = JPATH_SITE . '/' . $cssPath . '/' . $name;
 
 				// CSS exists already.
@@ -168,7 +200,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 					{
 						if ($this->log)
 						{
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE',
 									$font
@@ -205,10 +237,10 @@ final class ImportfontsGhsvs extends CMSPlugin
 					) {
 						if ($this->log)
 						{
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								Text::sprintf('PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_EMPTY_GOOGLEAPIS_RESPONSE', $font)
 							);
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								'Curl request failed with ' . $curlErrorNumber . ':' . $error
 							);
 						}
@@ -220,7 +252,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 				{
 					if ($this->log)
 					{
-						ImportfontsGhsvsHelper::log(
+						$this->helper->log(
 							'Can\'t request data from Google because neither allow_url_fopen nor curl_init/curl_exec is activated on your server.'
 						);
 					}
@@ -229,14 +261,13 @@ final class ImportfontsGhsvs extends CMSPlugin
 				}
 
 				// Extract specific parts from the received CSS.
-				$cssparser = new Cssparser;
-				$success   = $cssparser->read_from_string($response);
+				$success   = $this->cssparser->read_from_string($response);
 
 				if (!$success)
 				{
 					if ($this->log)
 					{
-						ImportfontsGhsvsHelper::log(
+						$this->helper->log(
 							Text::sprintf(
 								'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
 								$font,
@@ -248,11 +279,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 				}
 
 				// Get all @font-face blocks with 'src: ...' parts.
-				if (!($parents = $cssparser->find_parent_by_property('src')))
+				if (!($parents = $this->cssparser->find_parent_by_property('src')))
 				{
 					if ($this->log)
 					{
-						ImportfontsGhsvsHelper::log(
+						$this->helper->log(
 							Text::sprintf(
 								'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_INADEQUATE_GOOGLEAPIS_RESPONSE',
 								$font,
@@ -277,7 +308,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 					{
 						if ($this->log)
 						{
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
 									$font,
@@ -297,7 +328,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 					{
 						if ($this->log)
 						{
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
 									$font,
@@ -310,7 +341,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 					// Get/Create font filepath and filename for local saving ($fontFile[0]).
 					// Get fragment (#Roboto) if present ($fontFile[1]). E.g.needed for SVG.
-					$fontFile = ImportfontsGhsvsHelper::check4svg(
+					$fontFile = $this->helper->check4svg(
 						$parents[$key]['urlGoogle'],
 						$parents[$key]['src']
 					);
@@ -319,7 +350,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 					{
 						if ($this->log)
 						{
-							ImportfontsGhsvsHelper::log(
+							$this->helper->log(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_IDENTIFY_FONT_FILE',
 									$font,
@@ -341,7 +372,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 					if ($this->log && !$foundGoogleUrls[$parents[$key]['urlGoogle']])
 					{
-						ImportfontsGhsvsHelper::log(
+						$this->helper->log(
 							Text::sprintf(
 								'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_COULD_NOT_REPLACE_GOOGLE_URL',
 								$font
@@ -360,7 +391,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 						{
 							if ($this->log)
 							{
-								ImportfontsGhsvsHelper::log(
+								$this->helper->log(
 									Text::sprintf(
 										'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_DOWNLOAD_FAILED',
 										$font,
@@ -375,7 +406,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 						{
 							if ($this->log)
 							{
-								ImportfontsGhsvsHelper::log(
+								$this->helper->log(
 									Text::sprintf(
 										'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FONT_SAVE_FAILED',
 										$font,
@@ -394,11 +425,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 					$response = str_replace($gUrl, '', $response);
 				}
 
-				$response = $saveUserAgent . $cssparser->cleanString($response);
+				$response = $saveUserAgent . $this->cssparser->cleanString($response);
 
 				if (!File::write($cssAbs, $response) && $this->log)
 				{
-					ImportfontsGhsvsHelper::log(
+					$this->helper->log(
 						Text::sprintf(
 							'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_CSS_SAVE_FAILED',
 							$font,
@@ -418,7 +449,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 			{
 				foreach ($fallbacks as $fallbackItem)
 				{
-					ImportfontsGhsvsHelper::log(
+					$this->helper->log(
 						Text::sprintf(
 							'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_FALLBACKS',
 							implode(', ', $fallbackItem)
@@ -454,7 +485,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 	{
 		// Sanitize subform fields and some special cleanups for plg_system_importfontsghsvs.
 		if (
-			$this->app->isClient('administrator')
+			$this->getApplication()->isClient('administrator')
 			&& $context === 'com_plugins.plugin'
 			&& !empty($table->params) && is_string($table->params)
 			&& strpos($table->params, $this->meMarker) !== false
@@ -466,26 +497,8 @@ final class ImportfontsGhsvs extends CMSPlugin
 				//'filelist'
 			];
 
-			// Joomla 3
-			if (version_compare(JVERSION, '3.99999.99999', 'le'))
-			{
-				JLoader::register(
-					'FilterFieldHelper',
-					__DIR__ . '/src/Helper/FilterFieldJ3.php'
-				);
 
-				// class Form needs a value $name in __constructor
-				$constructorVariable = 'dummy';
-			}
-			// Joomla 4
-			else
-			{
-				JLoader::register(
-					'FilterFieldHelper',
-					__DIR__ . '/src/Helper/FilterFieldJ4.php'
-				);
 				$constructorVariable = null;
-			}
 
 			foreach ($this->usedSubforms as $fieldName => $file)
 			{
@@ -547,14 +560,14 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 								if (
 									count($parts) !== 2
-									|| (strpos($parts[0], self::$import_lineCheck[0]) !== 0
-										&& strpos($parts[1], self::$import_lineCheck[1]) !== 0)
+									|| (strpos($parts[0], $this->import_lineCheck[0]) !== 0
+										&& strpos($parts[1], $this->import_lineCheck[1]) !== 0)
 								) {
-									$this->app->enqueueMessage(
+									$this->getApplication()->enqueueMessage(
 										Text::sprintf(
 											'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_NO_GOOGLEAPIS_URL',
 											$value,
-											implode('?', self::$import_lineCheck)
+											implode('?', $this->import_lineCheck)
 										),
 										'error'
 									);
@@ -571,7 +584,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 										$value
 									);
 
-									$this->app->enqueueMessage($msg, 'error');
+									$this->getApplication()->enqueueMessage($msg, 'error');
 
 									return false;
 								}
@@ -618,7 +631,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 						if (count($families) > 1)
 						{
-							$this->app->enqueueMessage(
+							$this->getApplication()->enqueueMessage(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_IMPORT_LINE_SPLITTED',
 									implode('|', $families)
@@ -628,7 +641,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 						}
 						else
 						{
-							$this->app->enqueueMessage(
+							$this->getApplication()->enqueueMessage(
 								Text::sprintf(
 									'PLG_SYSTEM_IMPORTFONTSGHSVS_IMPORT_LINE_CHECK_CLEANED',
 									$item->import_line,
@@ -664,10 +677,10 @@ final class ImportfontsGhsvs extends CMSPlugin
 		if (is_null($this->execute) || $refresh === true)
 		{
 			if (
-				!$this->app->isClient('site')
-				|| ($this->app->isClient('site') && !$this->params->get('frontendon', 0))
-				|| (!$this->params->get('robots', 0) && $this->app->client->robot)
-				|| $this->app->getDocument()->getType() !== 'html'
+				!$this->getApplication()->isClient('site')
+				|| ($this->getApplication()->isClient('site') && !$this->params->get('frontendon', 0))
+				|| (!$this->params->get('robots', 0) && $this->getApplication()->client->robot)
+				|| $this->getApplication()->getDocument()->getType() !== 'html'
 			) {
 				$this->execute = false;
 			}
@@ -675,29 +688,32 @@ final class ImportfontsGhsvs extends CMSPlugin
 			{
 				$this->execute = is_bool($force) ? $force : true;
 			}
-			$this->fontPath   = 'media/' . self::$basepath . '/font';
+			$this->fontPath   = 'media/' . $this->basepath . '/font';
 			$this->renewalLog = JPATH_SITE . '/' . $this->fontPath . '/renewal.log';
 			$this->log = $this->params->get('log', 0);
-			self::$logFile = $this->app->get('log_path') . '/' . self::$basepath . '-log.txt';
+			$this->logFile = $this->helper->getLogFile();
+
+			#### DebUG
+			if ($this->log)
+			{
+				$this->helper->log(
+					'Log wurde in function goOn aktiviert. Diese Zeile ist nur zum Debuggen.'
+				);
+			}
 		}
 
 		return $this->execute;
-	}
-
-	public static function removeJPATH_SITE($str)
-	{
-		return str_replace(JPATH_SITE, '', $str);
 	}
 
 	public function onAjaxPlgSystemImportFontsGhsvsDeleteRenewalFile()
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
 		{
-			throw new Exception(JText::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
+			throw new Exception(Text::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
 		}
 		$this->goOn();
 
-		$success = ImportfontsGhsvsHelper::renewal($this->fontPath, $this->renewalLog);
+		$success = $this->helper->renewal($this->fontPath, $this->renewalLog);
 
 		if ($success !== true)
 		{
@@ -705,11 +721,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 		}
 		else
 		{
-			$renewalLog = self::removeJPATH_SITE($this->renewalLog);
+			$renewalLog = $this->helper->removeJPATH_SITE($this->renewalLog);
 			$html = Text::sprintf(
 				'PLG_SYSTEM_IMPORTFONTSGHSVS_BUTTON_RENEWAL_FORCE_SUCCESS',
 				$this->fontPath,
-				self::removeJPATH_SITE($this->renewalLog)
+				$this->helper->removeJPATH_SITE($this->renewalLog)
 			);
 		}
 		echo json_encode(['html' => $html]);
@@ -719,11 +735,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
 		{
-			throw new Exception(JText::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
+			throw new Exception(Text::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
 		}
 
 		$this->goOn();
-		$result = ImportfontsGhsvsHelper::getFolderSize(JPATH_SITE . '/' . $this->fontPath);
+		$result = $this->helper->getFolderSize(JPATH_SITE . '/' . $this->fontPath);
 		$html   = Text::sprintf(
 			'PLG_SYSTEM_IMPORTFONTSGHSVS_BUTTON_FOLDER_SIZE_RESULT',
 			$result[0],
@@ -738,11 +754,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
 		{
-			throw new Exception(JText::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
+			throw new Exception(Text::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
 		}
 
 		$this->goOn();
-		$file = self::$logFile;
+		$file = $this->logFile;
 
 		if (is_file($file))
 		{
@@ -753,7 +769,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 			$deleted = true;
 		}
 
-		$file = self::removeJPATH_SITE($file);
+		$file = $this->helper->removeJPATH_SITE($file);
 
 		if (!$deleted)
 		{
@@ -773,16 +789,16 @@ final class ImportfontsGhsvs extends CMSPlugin
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
 		{
-			throw new Exception(JText::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
+			throw new Exception(Text::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
 		}
 
 		$this->goOn();
 		$file = '';
-		$filePath = self::removeJPATH_SITE(self::$logFile);
+		$filePath = $this->helper->removeJPATH_SITE($this->logFile);
 
-		if (is_file(self::$logFile))
+		if (is_file($this->logFile))
 		{
-			$file = file_get_contents(self::$logFile);
+			$file = file_get_contents($this->logFile);
 		}
 
 		if (trim($file) === '')
@@ -807,22 +823,22 @@ final class ImportfontsGhsvs extends CMSPlugin
 	{
 		if (!$this->isAllowedUser() || !$this->isAjaxRequest())
 		{
-			throw new Exception(JText::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
+			throw new Exception(Text::_('JGLOBAL_AUTH_ACCESS_DENIED'), 403);
 		}
 		$this->goOn();
 		$filesize = 0;
-		$file = self::$logFile;
+		$file = $this->logFile;
 
 		if (is_file($file))
 		{
 			$bytes = filesize($file);
 			$filesize = HTMLHelper::_('number.bytes', $bytes);
 		}
-		$file = self::removeJPATH_SITE($file);
+		$file = $this->helper->removeJPATH_SITE($file);
 
 		if (isset($bytes))
 		{
-			$download = JUri::root() . '/' . ltrim($file, '/');
+			$download = Uri::root() . '/' . ltrim($file, '/');
 			$download = '<a href=' . $download . ' target=_blank download>Download</a>';
 		}
 		echo json_encode(['html' => 'Path: ' . $file . "\nSize: " . $filesize
@@ -831,7 +847,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 	private function isAjaxRequest()
 	{
-		return strtolower($this->app->input->server->get('HTTP_X_REQUESTED_WITH', ''))
+		return strtolower($this->getApplication()->input->server->get('HTTP_X_REQUESTED_WITH', ''))
 			=== 'xmlhttprequest';
 	}
 

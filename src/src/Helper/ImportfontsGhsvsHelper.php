@@ -11,12 +11,15 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Extension\ImportfontsGhsvs;
 
 class ImportfontsGhsvsHelper
 {
-	protected static $fileCount = 0;
+	protected $fileCount = 0;
 
-	public static function getFonts($params, $key = 'fonts') : array
+	protected $basepath = 'plg_system_importfontsghsvs';
+
+	public function getFonts($params, $key = 'fonts') : array
 	{
 		$require = [];
 		$fonts   = $params->get($key, null);
@@ -60,7 +63,7 @@ class ImportfontsGhsvsHelper
 	src: ..., url(https://fonts.gstatic.com/l/font?kit=QldKNThLqRwH-OJ1UHjlKFlb9KVOj66UafhJuQ&skey=20fa6569a31c71ee&v=v17) format('woff2');
 	That's a woff2 file!
 	*/
-	public static function check4svg($urlGoogle, $src)
+	public function check4svg($urlGoogle, $src)
 	{
 		$uri      = Uri::getInstance($urlGoogle);
 		$path     = $uri->getPath();
@@ -97,13 +100,11 @@ class ImportfontsGhsvsHelper
 		return false;
 	}
 
-	public static function log($data)
+	public function log($data)
 	{
-		$logFile = \PlgSystemImportFontsGhsvs::$logFile;
-
-		if ($logFile)
+		if ($logFile = $this->getLogFile())
 		{
-			$data = \PlgSystemImportFontsGhsvs::removeJPATH_SITE(strip_tags($data));
+			$data = $this->removeJPATH_SITE(strip_tags($data));
 
 			$lines = [];
 
@@ -127,12 +128,12 @@ class ImportfontsGhsvsHelper
 		}
 	}
 
-	public static function getFolderSize($dir)
+	public function getFolderSize($dir)
 	{
-		$folderSize = self::folderSize($dir);
+		$folderSize = $this->folderSize($dir);
 		$folderSize = HTMLHelper::_('number.bytes', $folderSize);
-		$folderSize = [$folderSize, self::$fileCount];
-		self::$fileCount = 0;
+		$folderSize = [$folderSize, $this->fileCount];
+		$this->fileCount = 0;
 
 		return $folderSize;
 	}
@@ -140,20 +141,20 @@ class ImportfontsGhsvsHelper
 	/*
 	https://gist.github.com/eusonlito/5099936
 	*/
-	protected static function folderSize($dir)
+	protected function folderSize($dir)
 	{
 		$bytes = 0;
 
 		foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each)
 		{
-			self::$fileCount++;
-			$bytes += is_file($each) ? (int) filesize($each) : (int) self::folderSize($each);
+			$this->fileCount++;
+			$bytes += is_file($each) ? (int) filesize($each) : (int) $this->folderSize($each);
 		}
 
 		return $bytes;
 	}
 
-	public static function renewal($fontPath, $renewalLog)
+	public function renewal($fontPath, $renewalLog)
 	{
 		$fontPath = JPATH_SITE . '/' . $fontPath;
 
@@ -166,7 +167,7 @@ class ImportfontsGhsvsHelper
 		{
 			$msg = Text::sprintf(
 				'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_DELETE_FONT_PATH',
-				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($fontPath)
+				$this->removeJPATH_SITE($fontPath)
 			);
 
 			return $msg;
@@ -176,12 +177,22 @@ class ImportfontsGhsvsHelper
 		{
 			$msg = Text::sprintf(
 				'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_WRITE_RENEWAL_FILE',
-				\PlgSystemImportFontsGhsvs::removeJPATH_SITE($renewalLog)
+				$this->removeJPATH_SITE($renewalLog)
 			);
 
 			return $msg;
 		}
 
 		return true;
+	}
+
+	public function removeJPATH_SITE($str)
+	{
+		return str_replace(JPATH_SITE, '', $str);
+	}
+
+	public function getLogFile()
+	{
+		return Factory::getApplication()->get('log_path') . '/' . $this->basepath . '-log.txt';
 	}
 }

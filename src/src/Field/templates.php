@@ -10,6 +10,7 @@ use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Exception;
 
 FormHelper::loadFieldClass('list');
 

@@ -11,6 +11,8 @@ use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
 use GHSVS\Plugin\System\ImportfontsGhsvs\Extension\ImportfontsGhsvs;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\ImportfontsGhsvsHelper;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\Cssparser;
 
 return new class () implements ServiceProviderInterface {
 	public function register(Container $container): void
@@ -19,9 +21,13 @@ return new class () implements ServiceProviderInterface {
 			PluginInterface::class,
 			function (Container $container)
 			{
+				$dispatcher = $container->get(DispatcherInterface::class);
 				$plugin = new ImportfontsGhsvs(
-					$container->get(DispatcherInterface::class),
-					(array) PluginHelper::getPlugin('system', 'importfontsghsvs')
+					$dispatcher,
+					(array) PluginHelper::getPlugin('system', 'importfontsghsvs'),
+					new ImportfontsGhsvsHelper(),
+					new Cssparser(),
+					#new FilterFieldHelper(),
 				);
 				$plugin->setApplication(Factory::getApplication());
 				#$plugin->setDatabase($container->get(DatabaseInterface::class));

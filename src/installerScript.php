@@ -16,6 +16,13 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 	protected $deleteFiles = [
 		'/media/plg_system_importfonts/js/index.html',
 		'/media/plg_system_importfonts/css/index.html',
+		'/plugins/system/importfontsghsvs/language/en-GB/en-GB.plg_system_importfontsghsvs.ini',
+		'/plugins/system/importfontsghsvs/language/en-GB/en-GB.plg_system_importfontsghsvs.sys.ini',
+		'/plugins/system/importfontsghsvs/language/de-DE/de-DE.plg_system_importfontsghsvs.ini',
+		'/plugins/system/importfontsghsvs/language/de-DE/de-DE.plg_system_importfontsghsvs.sys.ini',
+		'/plugins/system/importfontsghsvs/importfontsghsvs.php',
+		'/plugins/system/importfontsghsvs/src/Helper/FilterFieldJ3.php',
+		'/plugins/system/importfontsghsvs/src/Helper/FilterFieldJ4.php',
 	];
 
 	/**
