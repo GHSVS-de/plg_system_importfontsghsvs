@@ -1,16 +1,5 @@
 <?php
-defined('_JEXEC') or die;
-
-if (version_compare(JVERSION, '4', 'lt'))
-{
-	JLoader::registerNamespace(
-		'Joomla\Plugin\System\ImportfontsGhsvs',
-		__DIR__ . '/src',
-		false,
-		false,
-		'psr4'
-	);
-}
+namespace GHSVS\Plugin\System\ImportfontsGhsvs\Extension;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
@@ -21,14 +10,14 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Plugin\System\ImportfontsGhsvs\Helper\Cssparser;
-use Joomla\Plugin\System\ImportfontsGhsvs\Helper\ImportfontsGhsvsHelper;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\Cssparser;
+use GHSVS\Plugin\System\ImportfontsGhsvs\Helper\ImportfontsGhsvsHelper;
 use Joomla\Registry\Registry;
 
-class PlgSystemImportFontsGhsvs extends CMSPlugin
-{
-	protected $app;
+\defined('_JEXEC') or die;
 
+final class ImportfontsGhsvs extends CMSPlugin
+{
 	protected $autoloadLanguage = true;
 
 	protected static $basepath = 'plg_system_importfontsghsvs';
