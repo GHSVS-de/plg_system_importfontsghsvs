@@ -7,7 +7,7 @@ aNGEPASST für ausschließliche Nutzung mit Google Web Fonts
 ?>
 <?php
 
-namespace Joomla\Plugin\System\ImportfontsGhsvs\Helper;
+namespace GHSVS\Plugin\System\ImportfontsGhsvs\Helper;
 
 \defined('_JEXEC') or die;
 

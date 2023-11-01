@@ -1,6 +1,6 @@
 <?php
 
-namespace Joomla\Plugin\System\ImportfontsGhsvs\Helper;
+namespace GHSVS\Plugin\System\ImportfontsGhsvs\Helper;
 
 \defined('_JEXEC') or die;
 
