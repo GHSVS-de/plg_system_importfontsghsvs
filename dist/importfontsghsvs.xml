@@ -43,7 +43,7 @@
 
 				<field type="hidden" default="1" name="importfontsghsvsplugin"/>
 
-				<field name="version" type="plgSystemImportFontsGhsvs.version"
+				<field name="version" type="Version"
 					label="JVERSION"/>
 
 				<field name="frontendonSpacer" type="note" close="true"
@@ -57,8 +57,8 @@
 					<option value="1">JYES</option>
 				</field>
 
-				<field name="assetsbe" type="plgSystemImportFontsGhsvs.assetsbe"
-					hidden="true" loadjs="false" loadcss="true"/>
+				<field name="assetsbe" type="AssetsBe" hidden="true"
+					loadjs="false" loadcss="true" />
 
 			</fieldset>
 

@@ -23,6 +23,8 @@ class plgSystemImportfontsGhsvsInstallerScript extends InstallerScript
 		'/plugins/system/importfontsghsvs/importfontsghsvs.php',
 		'/plugins/system/importfontsghsvs/src/Helper/FilterFieldJ3.php',
 		'/plugins/system/importfontsghsvs/src/Helper/FilterFieldJ4.php',
+		'/plugins/system/importfontsghsvs/src/Field/version.php',
+		'/plugins/system/importfontsghsvs/src/Field/assetsbe.php',
 	];
 
 	/**

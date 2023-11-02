@@ -2,7 +2,7 @@
 
 Joomla system plugin ImportFontsGhsvs 2023.11.02
 
-Checksum entities: `&lt;sha256&gt;ab4b60f444a950433775abc16c9e0fae22ed2b53b3a09fbe193a9988e3332a76&lt;/sha256&gt;`
+Checksum entities: `&lt;sha256&gt;ae1169f892f095aa989e15cac1dd17ae75cd3bfcc94d9bbb3ff4e985074644cf&lt;/sha256&gt;`
 
 Joomla system plugin. Downloads, saves and loads Google Fonts but does not use the IP of your page visitors for that which can be a legal violation in some countries.
 
@@ -18,7 +18,7 @@ Joomla system plugin. Downloads, saves and loads Google Fonts but does not use t
 - maximumJoomla: 5.9999.9999
 - minimumPhp: 7.4.0
 - maximumPhp: 
-- Checksum: `<sha256>ab4b60f444a950433775abc16c9e0fae22ed2b53b3a09fbe193a9988e3332a76</sha256>`
+- Checksum: `<sha256>ae1169f892f095aa989e15cac1dd17ae75cd3bfcc94d9bbb3ff4e985074644cf</sha256>`
 - Readme: https://github.com/GHSVS-de/plg_system_importfontsghsvs#readme
 - Updates XML: https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/plg_system_importfontsghsvs-update.xml
 - Last tests: PHP 8.2<br>PHP 8.1<br>Joomla 4.4<br>Joomla 5.0
