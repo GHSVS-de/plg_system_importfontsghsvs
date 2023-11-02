@@ -6,26 +6,26 @@
 	<copyright>(C) 2019, G@HService Berlin Neukölln, Volkmar Volli Schlothauer.</copyright>
 	<license>GNU General Public License version 3 or later; see LICENSE.txt.</license>
 	<authorUrl>https://ghsvs.de</authorUrl>
-	<version>2023.10.21</version>
+	<version>2023.11.02</version>
 	<description>PLG_SYSTEM_IMPORTFONTSGHSVS_XML_DESCRIPTION</description>
 
 	<updateservers><server type="extension" priority="1" name="PLG_SYSTEM_IMPORTFONTSGHSVS">https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/plg_system_importfontsghsvs-update.xml</server></updateservers>
 
-	<infourl>https://github.com/GHSVS-de/plg_system_importfontsghsvs/releases/tag/2023.10.21</infourl>
+	<infourl>https://github.com/GHSVS-de/plg_system_importfontsghsvs/releases/tag/2023.11.02</infourl>
 
 	<scriptfile>installerScript.php</scriptfile>
 	<minimumPhp>7.4.0</minimumPhp>
 	<maximumPhp></maximumPhp>
-	<minimumJoomla>3.10.4</minimumJoomla>
+	<minimumJoomla>4.3.0</minimumJoomla>
 	<maximumJoomla>5.9999.9999</maximumJoomla>
 	<allowDowngrades>1</allowDowngrades>
 
 	<files>
-		<filename plugin="importfontsghsvs">importfontsghsvs.php</filename>
-		<filename>installerScript.php</filename>
-		<filename>LICENSE.txt</filename>
+		<folder plugin="importfontsghsvs">services</folder>
 		<folder>language</folder>
 		<folder>src</folder>
+		<filename>installerScript.php</filename>
+		<filename>LICENSE.txt</filename>
 	</files>
 
 	<media destination="plg_system_importfontsghsvs" folder="media">
@@ -34,9 +34,9 @@
 		<folder>js</folder>
 	</media>
 
-	<namespace path="src">Joomla\Plugin\System\ImportfontsGhsvs</namespace>
+	<namespace path="src">GHSVS\Plugin\System\ImportfontsGhsvs</namespace>
 
-	<config>
+	<config addfieldprefix="GHSVS\Plugin\System\ImportfontsGhsvs\Field">
   	<fields name="params" addfieldpath="plugins/system/importfontsghsvs/src/Field">
 
 			<fieldset name="basic">
