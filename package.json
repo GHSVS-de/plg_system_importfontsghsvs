@@ -2,7 +2,7 @@
 	"name": "plg_system_importfontsghsvs",
 	"nameReal": "plg_system_importfontsghsvs",
 	"filename": "importfontsghsvs",
-	"version": "2023.11.01",
+	"version": "2023.11.02",
 	"versionCompare": "2023.10.21",
 	"update": {
 		"infourl": "https://github.com/GHSVS-de/plg_system_importfontsghsvs{{thisRelease}}",
