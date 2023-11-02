@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="{{type}}" client="{{client}}" group="{{folder}}" method="upgrade">
+<extension type="{{type}}" client="{{client}}" group="{{folder}}" method="{{method}}">
 	<name>{{nameUpper}}</name>
 	<author>{{authorName}}</author>
 	<creationDate>{{creationDate}}</creationDate>
@@ -21,11 +21,11 @@
 	<allowDowngrades>{{allowDowngrades}}</allowDowngrades>
 
 	<files>
-		<filename plugin="{{filename}}">{{filename}}.php</filename>
-		<filename>installerScript.php</filename>
-		<filename>LICENSE.txt</filename>
+		<folder plugin="{{filename}}">services</folder>
 		<folder>language</folder>
 		<folder>src</folder>
+		<filename>installerScript.php</filename>
+		<filename>LICENSE.txt</filename>
 	</files>
 
 	<media destination="{{name}}" folder="media">
@@ -36,14 +36,14 @@
 
 	{{namespace}}
 
-	<config>
+	<config{{addfieldprefix}}>
   	<fields name="params" addfieldpath="plugins/system/importfontsghsvs/src/Field">
 
 			<fieldset name="basic">
 
 				<field type="hidden" default="1" name="importfontsghsvsplugin"/>
 
-				<field name="version" type="plgSystemImportFontsGhsvs.version"
+				<field name="version" type="Version"
 					label="JVERSION"/>
 
 				<field name="frontendonSpacer" type="note" close="true"
@@ -57,8 +57,8 @@
 					<option value="1">JYES</option>
 				</field>
 
-				<field name="assetsbe" type="plgSystemImportFontsGhsvs.assetsbe"
-					hidden="true" loadjs="false" loadcss="true"/>
+				<field name="assetsbe" type="AssetsBe" hidden="true"
+					loadjs="false" loadcss="true" />
 
 			</fieldset>
 

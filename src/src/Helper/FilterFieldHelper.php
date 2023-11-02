@@ -9,15 +9,20 @@
  * @link https://github.com/GHSVS-de/plg_system_importfontsghsvs
  */
 ?><?php
-defined('_JEXEC') or die;
+namespace GHSVS\Plugin\System\ImportfontsGhsvs\Helper;
 
-use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormField;
 
-class FilterFieldHelper extends Form
+\defined('_JEXEC') or die;
+
+class FilterFieldHelper extends FormField
 {
-	// Extended Form class for sanitizing subforms.
 	public function filterField($element, $value)
 	{
-		return parent::filterField($element, $value);
+		$this->element = $element;
+		$this->type = (string) $element->attributes()->type;
+		$result = parent::filter($value);
+
+		return $result;
 	}
 }

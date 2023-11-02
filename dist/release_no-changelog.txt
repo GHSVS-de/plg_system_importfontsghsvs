@@ -1,28 +1,32 @@
-2023.10.21
+2023.11.02
 
-Joomla system plugin ImportFontsGhsvs 2023.10.21
+Joomla system plugin ImportFontsGhsvs 2023.11.02
 
-Checksum entities: `&lt;sha256&gt;725870dae2f826fd784877a72ac92756e27e08f96f07e1580c04533eec297e94&lt;/sha256&gt;`
+Checksum entities: `&lt;sha256&gt;ae1169f892f095aa989e15cac1dd17ae75cd3bfcc94d9bbb3ff4e985074644cf&lt;/sha256&gt;`
 
 Joomla system plugin. Downloads, saves and loads Google Fonts but does not use the IP of your page visitors for that which can be a legal violation in some countries.
 
-### Joomla 5 ready
-
 ### Download
-[plg_system_importfontsghsvs-2023.10.21.zip](https://github.com/GHSVS-de/plg_system_importfontsghsvs/raw/2023.10.21/dist/plg_system_importfontsghsvs-2023.10.21.zip)
+[plg_system_importfontsghsvs-2023.11.02.zip](https://github.com/GHSVS-de/plg_system_importfontsghsvs/raw/2023.11.02/dist/plg_system_importfontsghsvs-2023.11.02.zip)
 
 ### Joomla-Target-Platform(s)
-3.&ast;, 4.&ast;, 5.&ast;
+4\.(3|4|5|6|7|8|9|10|11|12|13|14|15), 5.&ast;
 
 ### For the interested ones
-- [Compare releases 2022.08.22...2023.10.21](https://github.com/GHSVS-de/plg_system_importfontsghsvs/compare/2022.08.22...2023.10.21)
-- minimumJoomla: 3.10.4
+- [Compare releases 2023.10.21...2023.11.02](https://github.com/GHSVS-de/plg_system_importfontsghsvs/compare/2023.10.21...2023.11.02)
+- minimumJoomla: 4.3.0
 - maximumJoomla: 5.9999.9999
 - minimumPhp: 7.4.0
-- maximumPhp:
-- Checksum: `<sha256>725870dae2f826fd784877a72ac92756e27e08f96f07e1580c04533eec297e94</sha256>`
+- maximumPhp: 
+- Checksum: `<sha256>ae1169f892f095aa989e15cac1dd17ae75cd3bfcc94d9bbb3ff4e985074644cf</sha256>`
 - Readme: https://github.com/GHSVS-de/plg_system_importfontsghsvs#readme
 - Updates XML: https://raw.githubusercontent.com/GHSVS-de/upadateservers/master/plg_system_importfontsghsvs-update.xml
-- Last tests: PHP 8.2<br>PHP 8.1<br>PHP 7.4<br>Joomla 3.10<br>Joomla 4.3<br>Joomla 5.0
+- Last tests: PHP 8.2<br>PHP 8.1<br>Joomla 4.4<br>Joomla 5.0
 - Language files: de-DE<br>en-GB
 - Requires: Joomla's /media/ folder or at least /media/plg_sytem_importfonts/font/ must be writable for PHP (Joomla).
+- Uses: 
+- Contained packages (sub Joomla extensions):
+```
+
+```
+
