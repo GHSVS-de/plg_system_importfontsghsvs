@@ -29,11 +29,14 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 	protected $fontPath = null;
 
+	/*
+		File that contains renewal time stamp.
+	*/
 	protected $renewalLog = null;
 
 	protected $log = null;
 
-	public $logFile = null;
+	protected $logFile = null;
 
 	/**
 		* The ImportfontsGhsvsHelper helper
@@ -473,7 +476,11 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 		if ($combine)
 		{
-			Factory::getDocument()->addStyleDeclaration(implode('', $combine));
+			Factory::getDocument()->getWebAssetManager()->addInlineStyle(
+				implode('', $combine) . '',
+				[],
+				['name' => $this->basepath . '.combined'],
+			);
 		}
 	}
 
@@ -509,7 +516,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 				$subformData = $params->get($fieldName);
 
 				// Absolute path to subform xml.
-				$file        = __DIR__ . '/src/Form/' . $file . '.xml';
+				$file        = __DIR__ . '/../Form/' . $file . '.xml';
 
 				if (
 					!is_object($subformData) || !count(get_object_vars($subformData))
@@ -518,7 +525,7 @@ final class ImportfontsGhsvs extends CMSPlugin
 					continue;
 				}
 
-				$subform = new Joomla\CMS\Form\Form('dummy');
+				$subform = new \Joomla\CMS\Form\Form('dummy');
 				$subform->loadFile($file);
 				$xml = $subform->getXml();
 				$fieldsAsXMLArray = $xml->xpath('//field[@name=@name and not(ancestor::field/form/*)]');
@@ -691,14 +698,15 @@ final class ImportfontsGhsvs extends CMSPlugin
 			$this->fontPath   = 'media/' . $this->basepath . '/font';
 			$this->renewalLog = JPATH_SITE . '/' . $this->fontPath . '/renewal.log';
 			$this->log = $this->params->get('log', 0);
-			$this->logFile = $this->helper->getLogFile();
+			$this->logFile = $this->helper->getLogFile()['logFile'];
 
-			#### DebUG
 			if ($this->log)
 			{
-				$this->helper->log(
-					'Log wurde in function goOn aktiviert. Diese Zeile ist nur zum Debuggen.'
-				);
+				$this->helper->initLogger();
+				/* $this->helper->log(
+					'Log wurde in function goOn aktiviert. Diese Zeile ist nur zum Debuggen.',
+					\Joomla\CMS\Log\Log::INFO
+				); */
 			}
 		}
 
@@ -721,7 +729,6 @@ final class ImportfontsGhsvs extends CMSPlugin
 		}
 		else
 		{
-			$renewalLog = $this->helper->removeJPATH_SITE($this->renewalLog);
 			$html = Text::sprintf(
 				'PLG_SYSTEM_IMPORTFONTSGHSVS_BUTTON_RENEWAL_FORCE_SUCCESS',
 				$this->fontPath,
@@ -853,6 +860,6 @@ final class ImportfontsGhsvs extends CMSPlugin
 
 	private function isAllowedUser()
 	{
-		return Factory::getUser()->authorise('core.manage');
+		return $this->getApplication()->getIdentity() && $this->getApplication()->getIdentity()->authorise('core.manage');
 	}
 }

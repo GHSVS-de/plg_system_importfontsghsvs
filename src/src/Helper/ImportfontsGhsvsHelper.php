@@ -12,6 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use GHSVS\Plugin\System\ImportfontsGhsvs\Extension\ImportfontsGhsvs;
+use Joomla\CMS\Log\Log;
 
 class ImportfontsGhsvsHelper
 {
@@ -100,32 +101,20 @@ class ImportfontsGhsvsHelper
 		return false;
 	}
 
-	public function log($data)
+	public function log($data, $priority = Log::ERROR)
 	{
-		if ($logFile = $this->getLogFile())
-		{
-			$data = $this->removeJPATH_SITE(strip_tags($data));
-
-			$lines = [];
-
-			if (is_file($logFile))
-			{
-				$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-				//$lines = array_map('TRIM', $lines);
-				$lines = array_flip($lines);
+		Log::add($data, $priority, $this->basepath);
 			}
 
-			if (!isset($lines[$data]))
+	public function initLogger()
 			{
-				$date = '--DATE: ' . date('Y-m-d', time());
+		$options = $this->getLogFile();
 
-				if (!isset($lines[$date]))
-				{
-					file_put_contents($logFile, $date . "\n", FILE_APPEND);
-				}
-				file_put_contents($logFile, $data . "\n", FILE_APPEND);
-			}
-		}
+		Log::addLogger(
+			$options,
+			Log::ALL,
+			[$this->basepath]
+		);
 	}
 
 	public function getFolderSize($dir)
@@ -158,12 +147,12 @@ class ImportfontsGhsvsHelper
 	{
 		$fontPath = JPATH_SITE . '/' . $fontPath;
 
-		if (Folder::exists($fontPath))
+		if (\is_dir($fontPath))
 		{
 			Folder::delete($fontPath);
 		}
 
-		if (Folder::exists($fontPath))
+		if (\is_dir($fontPath))
 		{
 			$msg = Text::sprintf(
 				'PLG_SYSTEM_IMPORTFONTSGHSVS_ERROR_DELETE_FONT_PATH',
@@ -193,6 +182,14 @@ class ImportfontsGhsvsHelper
 
 	public function getLogFile()
 	{
-		return Factory::getApplication()->get('log_path') . '/' . $this->basepath . '-log.txt';
+		$options = [
+			'text_file' => $this->basepath . '-log.php',
+			'text_file_path' => Factory::getApplication()->get('log_path') . '/' . $this->basepath,
+			'text_entry_format' => '{DATETIME}  {PRIORITY}  {MESSAGE}',
+			'text_file_no_php' => true,
+		];
+
+		$options['logFile'] = $options['text_file_path'] . '/' . $options['text_file'];
+		return $options;
 	}
 }
